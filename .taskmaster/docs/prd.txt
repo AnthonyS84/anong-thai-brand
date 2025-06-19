@@ -1,0 +1,122 @@
+# Anong Thai Brand Website - Project Cleanup & Security Audit PRD
+
+## Project Overview
+The Anong Thai Brand website is a full-stack web application built with React/TypeScript frontend, Express.js backend, and Supabase database integration. This project requires comprehensive cleanup, security hardening, and optimization to ensure production readiness.
+
+## Current Technical Stack Analysis
+- **Frontend**: React 18 + TypeScript + Vite
+- **Backend**: Express.js with Supabase integration
+- **UI Framework**: Shadcn/UI with Radix UI components
+- **Styling**: Tailwind CSS with custom animations
+- **Mobile**: Capacitor for cross-platform deployment
+- **State Management**: React Query (TanStack Query)
+- **Build Tools**: Vite, ESLint, PostCSS
+- **Dependencies**: 50+ production dependencies, multiple Radix UI components
+
+## Project Objectives
+
+### Primary Goals
+1. **Security Hardening**: Identify and resolve security vulnerabilities
+2. **Code Quality**: Clean up codebase and improve maintainability
+3. **Performance Optimization**: Reduce bundle size and improve load times
+4. **Dependency Management**: Audit, update, and remove unused packages
+5. **Documentation**: Improve code documentation and project setup
+6. **Structure Optimization**: Organize files and remove duplicates
+
+### Secondary Goals
+1. **Testing Setup**: Implement proper testing infrastructure
+2. **CI/CD Pipeline**: Set up automated deployment processes
+3. **Monitoring**: Add error tracking and performance monitoring
+4. **SEO Optimization**: Improve search engine optimization
+
+## Detailed Requirements
+
+### Security Requirements
+- Audit all environment variables and secrets management
+- Review authentication and authorization implementations
+- Check for SQL injection and XSS vulnerabilities
+- Validate input sanitization across all forms
+- Review API endpoint security
+- Audit third-party package vulnerabilities
+- Implement Content Security Policy (CSP)
+- Review CORS configuration
+- Check for exposed sensitive information in code
+
+### Code Quality Requirements
+- Remove unused imports and dead code
+- Standardize code formatting and linting rules
+- Fix TypeScript type issues and improve type safety
+- Remove duplicate functions and components
+- Improve error handling patterns
+- Standardize naming conventions
+- Add proper JSDoc documentation
+- Implement consistent file organization
+
+### Performance Requirements
+- Analyze and optimize bundle size
+- Implement code splitting and lazy loading
+- Optimize image assets and compression
+- Review and remove unused CSS
+- Optimize database queries
+- Implement proper caching strategies
+- Minimize render blocking resources
+
+### Dependency Management
+- Audit all npm packages for security vulnerabilities
+- Remove unused dependencies
+- Update outdated packages to latest stable versions
+- Consolidate duplicate functionality
+- Review and optimize package.json scripts
+- Check for dependency conflicts
+
+### File Structure & Organization
+- Remove duplicate files and folders
+- Standardize component file organization
+- Clean up import paths and use absolute imports
+- Organize assets and static files
+- Remove temporary and build artifacts
+- Implement consistent naming conventions
+
+### Documentation Requirements
+- Update README with current setup instructions
+- Document API endpoints and data models
+- Add component documentation
+- Create deployment guides
+- Document environment setup
+- Add troubleshooting guides
+
+## Success Metrics
+- Zero high/critical security vulnerabilities
+- Reduced bundle size by at least 20%
+- Improved Lighthouse scores (90+ for Performance, Accessibility, Best Practices, SEO)
+- 100% TypeScript type coverage
+- Zero ESLint errors/warnings
+- Comprehensive test coverage (>80%)
+- Complete and accurate documentation
+
+## Technical Deliverables
+1. Security audit report with remediation
+2. Cleaned and optimized codebase
+3. Updated dependency manifest
+4. Performance optimization report
+5. Comprehensive documentation
+6. Testing infrastructure setup
+7. CI/CD pipeline configuration
+8. Deployment and monitoring setup
+
+## Risk Assessment
+- **High Risk**: Security vulnerabilities in authentication/authorization
+- **Medium Risk**: Breaking changes from dependency updates
+- **Low Risk**: Code cleanup may temporarily reduce development velocity
+
+## Timeline Considerations
+- Security audit and critical fixes: High priority
+- Code cleanup and optimization: Medium priority
+- Documentation and testing: Medium priority
+- CI/CD and monitoring: Low priority
+
+## Stakeholder Benefits
+- **Developers**: Cleaner, more maintainable codebase
+- **Users**: Faster, more secure website experience
+- **Business**: Reduced security risks and technical debt
+- **Operations**: Easier deployment and monitoring

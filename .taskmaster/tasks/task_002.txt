@@ -1,0 +1,16 @@
+# Task ID: 2
+# Title: 📦 Dependency Security Audit
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Audit all npm packages for security vulnerabilities and outdated versions
+# Details:
+- Run npm audit on both frontend and backend
+- Check for known vulnerabilities in dependencies
+- Update packages to latest secure versions
+- Remove unused dependencies
+- Review package-lock.json for inconsistencies
+- Check for duplicate dependencies between frontend/backend
+
+# Test Strategy:
+npm audit, snyk scan, dependency analysis tools

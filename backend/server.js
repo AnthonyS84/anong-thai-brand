@@ -30,9 +30,25 @@ app.use(corsMiddleware)
 app.use(securityHeaders)
 app.use(rateLimiter)
 
-// Standard CORS configuration as fallback
+// Standard CORS configuration as fallback - restrictive configuration
 app.use(cors({
-  origin: '*',
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:5173', 
+      'http://localhost:4173',
+      process.env.FRONTEND_URL
+    ].filter(Boolean);
+    
+    // Allow requests with no origin (mobile apps, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'), false);
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-client-info', 'apikey']

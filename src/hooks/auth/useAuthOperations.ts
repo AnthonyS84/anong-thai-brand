@@ -13,14 +13,26 @@ export function useAuthOperations(
     try {
       const result = await authService.signUp({ email, password, firstName, lastName });
       
-      // Account is created immediately, no email confirmation needed
-      console.log('✅ Account created successfully - no confirmation email sent');
+      // Check if email verification is required
+      const requiresVerification = result.requiresEmailVerification;
       
-      return { 
-        accountCreated: true, 
-        user: result.user,
-        session: result.session
-      };
+      if (requiresVerification) {
+        console.log('📧 Account created - email verification required');
+        return { 
+          accountCreated: true, 
+          user: result.user,
+          session: result.session,
+          requiresEmailVerification: true
+        };
+      } else {
+        console.log('✅ Account created and verified successfully');
+        return { 
+          accountCreated: true, 
+          user: result.user,
+          session: result.session,
+          requiresEmailVerification: false
+        };
+      }
     } catch (error) {
       console.error('Sign up error:', error);
       throw error;
@@ -107,11 +119,83 @@ export function useAuthOperations(
     }
   };
 
+  // Enhanced password change with history validation
+  const changePassword = async (currentPassword: string, newPassword: string) => {
+    if (!user) throw new Error('No user logged in');
+    
+    try {
+      await authService.changePassword(currentPassword, newPassword);
+    } catch (error) {
+      console.error('Change password error:', error);
+      throw error;
+    }
+  };
+
+  // Email verification methods
+  const resendVerificationEmail = async (email: string) => {
+    try {
+      return await authService.resendVerificationEmail(email);
+    } catch (error) {
+      console.error('Resend verification error:', error);
+      throw error;
+    }
+  };
+
+  const verifyEmail = async (token: string, email: string) => {
+    try {
+      return await authService.verifyEmail(token, email);
+    } catch (error) {
+      console.error('Email verification error:', error);
+      throw error;
+    }
+  };
+
+  const getEmailVerificationStatus = async () => {
+    try {
+      return await authService.getEmailVerificationStatus();
+    } catch (error) {
+      console.error('Get verification status error:', error);
+      throw error;
+    }
+  };
+
+  const requiresEmailVerification = async () => {
+    try {
+      return await authService.requiresEmailVerification();
+    } catch (error) {
+      console.error('Check verification requirement error:', error);
+      return false;
+    }
+  };
+
+  // Password validation methods
+  const validatePassword = async (password: string) => {
+    if (!user) throw new Error('No user logged in');
+    
+    try {
+      return await authService.validatePassword(user.id, password);
+    } catch (error) {
+      console.error('Password validation error:', error);
+      throw error;
+    }
+  };
+
+  const validatePasswordStrength = (password: string) => {
+    return authService.validatePasswordStrength(password);
+  };
+
   return {
     signUp,
     signIn,
     signOut,
     resetPassword,
-    updateProfile
+    updateProfile,
+    changePassword,
+    resendVerificationEmail,
+    verifyEmail,
+    getEmailVerificationStatus,
+    requiresEmailVerification,
+    validatePassword,
+    validatePasswordStrength
   };
 }

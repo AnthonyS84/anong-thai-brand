@@ -4,6 +4,8 @@ import { domainValidationService } from './domainValidation';
 import { mfaAuthService } from '../mfaAuthService';
 import { mfaPasswordChangeService } from '../mfa/mfaPasswordChangeService';
 import { WelcomeEmailService } from '../welcomeEmailService';
+import { emailVerificationService } from './emailVerificationService';
+import { passwordHistoryService, type PasswordValidationResult } from './passwordHistoryService';
 
 export interface SignUpData {
   email: string;
@@ -27,6 +29,12 @@ export class AuthOperationsService {
         firstName: data.firstName,
         lastName: data.lastName
       });
+
+      // Validate password strength before creating account
+      const passwordValidation = passwordHistoryService.validatePasswordStrength(data.password);
+      if (!passwordValidation.valid) {
+        throw new Error(passwordValidation.error || 'Password does not meet security requirements');
+      }
       
       const { data: authData, error } = await supabase.auth.signUp({
         email: data.email,
@@ -36,7 +44,7 @@ export class AuthOperationsService {
             first_name: data.firstName,
             last_name: data.lastName,
           },
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/auth/verify-email`,
         },
       });
 
@@ -49,10 +57,29 @@ export class AuthOperationsService {
       console.log('🔐 AuthOperations: Auth data received:', {
         userId: authData.user?.id,
         userEmail: authData.user?.email,
-        hasSession: !!authData.session
+        hasSession: !!authData.session,
+        emailConfirmed: !!authData.user?.email_confirmed_at
       });
 
-      // Send welcome email after successful signup
+      // Check if email confirmation is required
+      const requiresVerification = !authData.user?.email_confirmed_at;
+      
+      if (requiresVerification) {
+        console.log('📧 AuthOperations: Email verification required for:', data.email);
+        
+        // Track that verification email was sent
+        if (authData.user?.id) {
+          try {
+            await supabase.rpc('track_email_verification_sent', {
+              p_user_id: authData.user.id
+            });
+          } catch (trackError) {
+            console.warn('📧 AuthOperations: Failed to track verification email:', trackError);
+          }
+        }
+      }
+
+      // Send welcome email after successful signup (regardless of verification status)
       if (authData.user && data.firstName) {
         try {
           console.log('👋 AuthOperations: Attempting to send welcome email to:', data.email);
@@ -85,6 +112,7 @@ export class AuthOperationsService {
       return {
         user: authData.user,
         session: authData.session,
+        requiresEmailVerification: requiresVerification,
       };
     } catch (error) {
       console.error('🔐 AuthOperations: Sign up process failed:', error);
@@ -142,6 +170,62 @@ export class AuthOperationsService {
 
   getPendingPasswordChangeEmail(): string | null {
     return mfaPasswordChangeService.getPendingEmail();
+  }
+
+  // Enhanced password change with history validation
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    if (!domainValidationService.isDomainValid()) {
+      throw new Error('Authentication not available on this domain');
+    }
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error('No authenticated user found');
+    }
+
+    // Validate new password strength and history
+    const validation = await passwordHistoryService.validatePasswordComprehensive(user.id, newPassword);
+    if (!validation.valid) {
+      throw new Error(validation.error || 'Password validation failed');
+    }
+
+    // Update password through Supabase
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    // Add password to history (Supabase will trigger our database function)
+    console.log('✅ AuthOperations: Password changed successfully');
+  }
+
+  // Email verification methods
+  async resendVerificationEmail(email: string) {
+    return emailVerificationService.resendVerificationEmail(email);
+  }
+
+  async verifyEmail(token: string, email: string) {
+    return emailVerificationService.verifyEmail(token, email);
+  }
+
+  async getEmailVerificationStatus() {
+    return emailVerificationService.getVerificationInfo();
+  }
+
+  async requiresEmailVerification(): Promise<boolean> {
+    return emailVerificationService.requiresEmailVerification();
+  }
+
+  // Password validation methods
+  async validatePassword(userId: string, password: string): Promise<PasswordValidationResult> {
+    return passwordHistoryService.validatePasswordComprehensive(userId, password);
+  }
+
+  validatePasswordStrength(password: string): PasswordValidationResult {
+    return passwordHistoryService.validatePasswordStrength(password);
   }
 }
 
