@@ -1,8 +1,20 @@
 
 import express from 'express'
 import { createClient } from '@supabase/supabase-js'
+import dotenv from 'dotenv'
+
+// Ensure environment variables are loaded
+dotenv.config()
 
 const router = express.Router()
+
+// Check if environment variables are available
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('Missing required Supabase environment variables in products.js');
+  console.log('SUPABASE_URL:', process.env.SUPABASE_URL);
+  console.log('SUPABASE_SERVICE_ROLE_KEY exists:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
+}
+
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
 
 // Get all products with optional filtering

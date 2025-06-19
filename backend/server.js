@@ -11,6 +11,7 @@ import contactRouter from './routes/contact.js'
 import { verifyJWT, rateLimiter, validateInput } from './middleware/jwtAuth.js'
 import { securityHeaders } from './middleware/securityHeaders.js'
 import { requireAdminRole, validateCustomerOwnership } from './middleware/adminAuth.js'
+import { corsMiddleware } from './middleware/corsMiddleware.js'
 
 dotenv.config()
 
@@ -22,13 +23,16 @@ if (!process.env.SUPABASE_URL) {
 
 const app = express()
 
-// Apply security middleware first
+// Apply CORS middleware first to handle preflight requests
+app.use(corsMiddleware)
+
+// Apply security middleware
 app.use(securityHeaders)
 app.use(rateLimiter)
 
-// CORS configuration
+// Standard CORS configuration as fallback
 app.use(cors({
-  origin: process.env.FRONTEND_URL || ['http://localhost:3000', 'http://localhost:5173'],
+  origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-client-info', 'apikey']
