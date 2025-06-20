@@ -1,26 +1,32 @@
-
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
-export default function CreateCustomerForm() {
-  const [formData, setFormData] = useState({
+interface FormData {
+  fullName: string;
+  email: string;
+}
+
+interface CreateCustomerFormProps {}
+
+const CreateCustomerForm: React.FC<CreateCustomerFormProps> = () => {
+  const [formData, setFormData] = useState<FormData>({
     fullName: '',
     email: '',
   });
 
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  function handleChange(e) {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
-  }
+  };
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage('');
     setError('');
@@ -74,7 +80,7 @@ export default function CreateCustomerForm() {
         description: "Customer record created successfully.",
       });
 
-    } catch (err) {
+    } catch (err: any) {
       console.error('Unexpected error:', err);
       setError(err.message || 'Failed to create customer');
       
@@ -86,7 +92,7 @@ export default function CreateCustomerForm() {
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div style={{ maxWidth: 400, margin: 'auto' }}>
@@ -127,4 +133,6 @@ export default function CreateCustomerForm() {
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
-}
+};
+
+export default CreateCustomerForm;
