@@ -1,73 +1,39 @@
-
 import { useState, useEffect, useMemo } from "react";
-import { recipes } from "@/data/recipes";
+import { loadRecipeDetail } from "@/data/recipesMeta";
 import { products } from "@/data/products";
+import { Recipe } from "@/types";
 
 export const useRecipeDetail = (id: string | undefined) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
   
-  // Enhanced recipe lookup with multiple fallback strategies
-  const recipe = useMemo(() => {
-    if (!id) return null;
-    
-    console.log('Looking for recipe with ID:', id);
-    console.log('Available recipes:', recipes.map(r => ({ id: r.id, name: r.name })));
-    
-    // Strategy 1: Direct exact match
-    let foundRecipe = recipes.find(r => r.id === id);
-    if (foundRecipe) {
-      console.log('Found recipe via exact match:', foundRecipe.id);
-      return foundRecipe;
-    }
-    
-    // Strategy 2: Case-insensitive match
-    foundRecipe = recipes.find(r => r.id.toLowerCase() === id.toLowerCase());
-    if (foundRecipe) {
-      console.log('Found recipe via case-insensitive match:', foundRecipe.id);
-      return foundRecipe;
-    }
-    
-    // Strategy 3: URL decoded match
-    try {
-      const decodedId = decodeURIComponent(id);
-      foundRecipe = recipes.find(r => r.id === decodedId || r.id.toLowerCase() === decodedId.toLowerCase());
-      if (foundRecipe) {
-        console.log('Found recipe via URL decoded match:', foundRecipe.id);
-        return foundRecipe;
-      }
-    } catch (e) {
-      console.log('Failed to decode URL:', e);
-    }
-    
-    // Strategy 4: Partial match (for hyphenated variations)
-    const normalizedId = id.toLowerCase().replace(/[-_\s]/g, '');
-    foundRecipe = recipes.find(r => {
-      const normalizedRecipeId = r.id.toLowerCase().replace(/[-_\s]/g, '');
-      return normalizedRecipeId === normalizedId;
-    });
-    if (foundRecipe) {
-      console.log('Found recipe via normalized match:', foundRecipe.id);
-      return foundRecipe;
-    }
-    
-    // Strategy 5: Search by name match (last resort)
-    foundRecipe = recipes.find(r => 
-      r.name.en.toLowerCase().replace(/[-_\s]/g, '') === normalizedId ||
-      r.name.th.toLowerCase().replace(/[-_\s]/g, '') === normalizedId
-    );
-    if (foundRecipe) {
-      console.log('Found recipe via name match:', foundRecipe.id);
-      return foundRecipe;
-    }
-    
-    console.log('No recipe found for ID:', id);
-    return null;
-  }, [id]);
-  
+  // Load recipe data asynchronously for better performance
   useEffect(() => {
-    // Scroll to top when component mounts or recipe changes
+    if (!id) {
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    
+    // Use the optimized loader
+    loadRecipeDetail(id).then((foundRecipe) => {
+      if (foundRecipe) {
+        console.log('Found recipe via lazy loading:', foundRecipe.id);
+        setRecipe(foundRecipe);
+      } else {
+        console.log('No recipe found for ID:', id);
+        setRecipe(null);
+      }
+      setIsLoading(false);
+    }).catch((error) => {
+      console.error('Error loading recipe:', error);
+      setRecipe(null);
+      setIsLoading(false);
+    });
+
+    // Scroll to top when recipe changes
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-    setIsLoading(false);
   }, [id]);
   
   const relatedProducts = useMemo(() => {

@@ -7,8 +7,12 @@
     "dev": "vite",
     "build": "vite build --mode production",
     "build:dev": "vite build --mode development",
+    "build:analyze": "vite build --mode production && npx vite-bundle-analyzer dist",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "optimize-images": "node scripts/optimize-images.js",
+    "check-performance": "node scripts/optimize-images.js check",
+    "build:optimized": "npm run optimize-images && npm run build"
   },
   "dependencies": {
     "@capacitor/android": "^7.3.0",

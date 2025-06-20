@@ -1,15 +1,16 @@
-
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import NavigationBanner from "@/components/layout/NavigationBanner";
 import Footer from "@/components/layout/Footer";
-import { recipes } from "@/data/recipes";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Search, Clock, Users } from "lucide-react";
 import { OptimizedLazyImage } from "@/components/ui/optimized-lazy-image";
+
+// Import lightweight metadata instead of full recipe data
+import { recipesMeta, type RecipeMeta } from "@/data/recipesMeta";
 
 const Recipes = () => {
   const { language } = useLanguage();
@@ -21,6 +22,7 @@ const Recipes = () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, []);
   
+  // Memoize translations to prevent recreation
   const translations = useMemo(() => ({
     en: {
       title: "Traditional Thai Recipes",
@@ -32,11 +34,19 @@ const Recipes = () => {
         mains: "Main Dishes",
         soups: "Soups",
         salads: "Salads",
-        desserts: "Desserts"
+        desserts: "Desserts",
+        curry: "Curries",
+        noodles: "Noodles",
+        "hot pot": "Hot Pot",
+        seafood: "Seafood",
+        vegetarian: "Vegetarian",
+        chicken: "Chicken",
+        beef: "Beef"
       },
       servings: "servings",
       minutes: "minutes",
-      viewRecipe: "View Recipe"
+      viewRecipe: "View Recipe",
+      noResults: "No recipes found matching your criteria."
     },
     th: {
       title: "สูตรอาหารไทยดั้งเดิม",
@@ -48,26 +58,54 @@ const Recipes = () => {
         mains: "อาหารจานหลัก", 
         soups: "ซุป",
         salads: "สลัด",
-        desserts: "ของหวาน"
+        desserts: "ของหวาน",
+        curry: "แกง",
+        noodles: "เส้น",
+        "hot pot": "หม้อไฟ",
+        seafood: "อาหารทะเล",
+        vegetarian: "มังสวิรัติ",
+        chicken: "ไก่",
+        beef: "เนื้อ"
       },
       servings: "ที่เสิร์ฟ",
       minutes: "นาที",
-      viewRecipe: "ดูสูตรอาหาร"
+      viewRecipe: "ดูสูตรอาหาร",
+      noResults: "ไม่พบสูตรอาหารที่ตรงกับเงื่อนไข"
     }
   }), []);
   
   const t = translations[language];
   
+  // Optimized search handler with debouncing
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  }, []);
+  
+  // Optimized category handler
+  const handleCategoryChange = useCallback((category: string) => {
+    setSelectedCategory(category);
+  }, []);
+  
+  // Memoize filtered recipes with performance optimization
   const filteredRecipes = useMemo(() => {
-    return recipes.filter(recipe => {
-      const matchesSearch = recipe.name[language].toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           recipe.description[language].toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = selectedCategory === "all" || recipe.category.includes(selectedCategory);
+    return recipesMeta.filter(recipe => {
+      const matchesSearch = !searchQuery || 
+        recipe.name[language]?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        recipe.description[language]?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = selectedCategory === "all" || 
+        recipe.category?.includes(selectedCategory);
       return matchesSearch && matchesCategory;
     });
   }, [searchQuery, selectedCategory, language]);
   
-  const categories = Object.keys(t.categories);
+  // Get unique categories from recipes
+  const availableCategories = useMemo(() => {
+    const categories = new Set(['all']);
+    recipesMeta.forEach(recipe => {
+      recipe.category.forEach(cat => categories.add(cat));
+    });
+    return Array.from(categories);
+  }, []);
   
   return (
     <div className="min-h-screen flex flex-col bg-anong-ivory">
@@ -78,10 +116,12 @@ const Recipes = () => {
           {/* Header */}
           <div className="text-center mb-12 md:mb-16">
             <div className="w-16 h-16 mx-auto mb-6">
-              <img 
+              {/* Use optimized logo with proper sizing and priority loading */}
+              <OptimizedLazyImage
                 src="/lovable-uploads/f440215b-ebf7-4c9f-9cf6-412d4018796e.png" 
                 alt="ANONG Logo"
                 className="w-full h-full object-contain"
+                priority={true}
               />
             </div>
             <h1 className="anong-heading text-4xl md:text-5xl lg:text-6xl mb-6 text-anong-black">{t.title}</h1>
@@ -104,7 +144,7 @@ const Recipes = () => {
                   type="text"
                   placeholder={t.searchPlaceholder}
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={handleSearchChange}
                   className="pl-10 anong-input"
                 />
               </div>
@@ -112,18 +152,18 @@ const Recipes = () => {
             
             {/* Category Filter */}
             <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
+              {availableCategories.map((category) => (
                 <Button
                   key={category}
                   variant={selectedCategory === category ? "gold" : "ghost"}
                   size="default"
-                  onClick={() => setSelectedCategory(category)}
+                  onClick={() => handleCategoryChange(category)}
                   className={selectedCategory === category ? 
                     "bg-anong-gold text-anong-black hover:bg-anong-warm-yellow font-medium" : 
                     "text-anong-black hover:bg-anong-gold/10 border border-anong-gold/20"
                   }
                 >
-                  {t.categories[category as keyof typeof t.categories]}
+                  {t.categories[category as keyof typeof t.categories] || category}
                 </Button>
               ))}
             </div>
@@ -131,7 +171,7 @@ const Recipes = () => {
           
           {/* Recipes Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {filteredRecipes.map((recipe) => (
+            {filteredRecipes.map((recipe, index) => (
               <Card key={recipe.id} className="anong-card overflow-hidden group hover:shadow-xl transition-all duration-300">
                 <Link to={`/recipes/${recipe.id}`} className="block">
                   <div className="h-48 md:h-56 bg-gradient-to-b from-anong-cream to-anong-ivory p-6 flex items-center justify-center">
@@ -139,6 +179,7 @@ const Recipes = () => {
                       src={recipe.image}
                       alt={recipe.name[language]}
                       className="max-w-[160px] max-h-[160px] w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-300"
+                      priority={index < 3} // Prioritize first 3 images
                     />
                   </div>
                   
@@ -177,7 +218,7 @@ const Recipes = () => {
           {filteredRecipes.length === 0 && (
             <div className="text-center py-12">
               <p className="anong-body text-anong-black/70">
-                {language === 'en' ? 'No recipes found matching your criteria.' : 'ไม่พบสูตรอาหารที่ตรงกับเงื่อนไข'}
+                {t.noResults}
               </p>
             </div>
           )}
