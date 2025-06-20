@@ -41,11 +41,21 @@ export class PayFastService {
     console.log('🔑 PayFastService: Loading secure credentials from Supabase');
     
     try {
+      // Get Supabase URL from environment
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      
+      if (!supabaseUrl) {
+        console.log('⚠️ PayFastService: No Supabase URL configured');
+        this.credentials = null;
+        return;
+      }
+
       // Load credentials from Supabase Edge Function that accesses secrets
-      const response = await fetch('/functions/v1/get-payfast-config', {
+      const response = await fetch(`${supabaseUrl}/functions/v1/get-payfast-config`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
       });
 

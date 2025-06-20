@@ -1,5 +1,19 @@
+// Environment-aware backend URL configuration
+const getBackendURL = () => {
+  const envURL = import.meta.env.VITE_BACKEND_URL;
+  const environment = import.meta.env.VITE_ENVIRONMENT;
+  
+  // Only use backend API in development with localhost
+  if (environment === 'development' && 
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return envURL || 'http://localhost:5000';
+  }
+  
+  // In production, always return null to skip API and use Supabase directly
+  return null;
+};
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'
+const BACKEND_URL = getBackendURL();
 
 export interface Customer {
   id: string
@@ -18,16 +32,23 @@ export interface Product {
   created_at: string
 }
 
-export interface ContactSubmission {
-  name: string
+export interface ProductsResponse {
+  products: Product[]
+}
+
+export interface CreateCustomerRequest {
+  fullName: string
   email: string
-  subject?: string
-  message: string
 }
 
 class ApiService {
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const url = `${BACKEND_URL}${endpoint}`
+    // If no backend URL configured, throw error to trigger fallback
+    if (!BACKEND_URL) {
+      throw new Error('No backend configured - using Supabase fallback');
+    }
+
+    const url = `${BACKEND_URL}${endpoint}`;
     
     const config: RequestInit = {
       headers: {
@@ -35,124 +56,43 @@ class ApiService {
         ...options.headers,
       },
       ...options,
-    }
+    };
 
     try {
-      const response = await fetch(url, config)
+      const response = await fetch(url, config);
       
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      const data = await response.json()
-      return data
+      
+      return await response.json();
     } catch (error) {
-      console.error('API request failed:', error)
-      throw error
+      console.error(`API request failed:`, error);
+      throw error;
     }
   }
 
-  private getAuthHeaders(): HeadersInit {
-    // Get token from localStorage or session storage
-    const token = localStorage.getItem('sb-nyadgiutmweuyxqetfuh-auth-token')
-    if (token) {
-      try {
-        const authData = JSON.parse(token)
-        if (authData.access_token) {
-          return {
-            'Authorization': `Bearer ${authData.access_token}`
-          }
-        }
-      } catch (e) {
-        console.error('Error parsing auth token:', e)
-      }
+  async getProducts(params?: { category?: string }): Promise<ProductsResponse> {
+    const queryParams = new URLSearchParams();
+    if (params?.category) {
+      queryParams.append('category', params.category);
     }
-    return {}
+    
+    const endpoint = `/api/products${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    return this.request<ProductsResponse>(endpoint);
   }
 
-  // Customer endpoints
-  async createCustomer(customerData: Omit<Customer, 'id' | 'created_at'>) {
-    return this.request<{ message: string; customer: Customer }>('/api/create-customer', {
+  async createCustomer(customerData: CreateCustomerRequest): Promise<Customer> {
+    return this.request<Customer>('/api/customers', {
       method: 'POST',
-      headers: {
-        ...this.getAuthHeaders()
-      },
       body: JSON.stringify(customerData),
-    })
+    });
   }
 
-  async updateCustomer(id: string, updates: Partial<Omit<Customer, 'id' | 'created_at'>>) {
-    return this.request<{ message: string; customer: Customer }>('/api/update-customer', {
-      method: 'POST',
-      headers: {
-        ...this.getAuthHeaders()
-      },
-      body: JSON.stringify({ id, ...updates }),
-    })
-  }
-
-  async getCustomers(limit = 50, offset = 0) {
-    return this.request<{ customers: Customer[] }>(`/api/customers?limit=${limit}&offset=${offset}`, {
-      headers: {
-        ...this.getAuthHeaders()
-      }
-    })
-  }
-
-  async getMyCustomer() {
-    return this.request<{ customer: Customer }>('/api/customer/me', {
-      headers: {
-        ...this.getAuthHeaders()
-      }
-    })
-  }
-
-  // Product endpoints (public)
-  async getProducts(params?: { category?: string; search?: string; limit?: number }) {
-    const queryParams = new URLSearchParams()
-    if (params?.category) queryParams.append('category', params.category)
-    if (params?.search) queryParams.append('search', params.search)
-    if (params?.limit) queryParams.append('limit', params.limit.toString())
-
-    const queryString = queryParams.toString()
-    return this.request<{ products: Product[] }>(`/api/products${queryString ? `?${queryString}` : ''}`)
-  }
-
-  async getProduct(id: string) {
-    return this.request<{ product: Product }>(`/api/products/${id}`)
-  }
-
-  async createProduct(productData: Omit<Product, 'id' | 'created_at'>) {
-    return this.request<{ message: string; product: Product }>('/api/products', {
-      method: 'POST',
-      headers: {
-        ...this.getAuthHeaders()
-      },
-      body: JSON.stringify(productData),
-    })
-  }
-
-  // Contact endpoints (public)
-  async submitContactForm(contactData: ContactSubmission) {
-    return this.request<{ message: string; submission: any }>('/api/contact', {
-      method: 'POST',
-      body: JSON.stringify(contactData),
-    })
-  }
-
-  async getContactSubmissions() {
-    return this.request<{ submissions: any[] }>('/api/contact', {
-      headers: {
-        ...this.getAuthHeaders()
-      }
-    })
-  }
-
-  // Health check
-  async healthCheck() {
-    return this.request<{ status: string; timestamp: string }>('/health')
+  // Check if backend is available
+  isBackendAvailable(): boolean {
+    return BACKEND_URL !== null;
   }
 }
 
-export const apiService = new ApiService()
+export const apiService = new ApiService();
