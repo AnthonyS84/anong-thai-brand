@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -23,6 +22,7 @@ const Profile = () => {
       phone: 'Phone',
       address: 'Address',
       placeholder: 'Not provided',
+      nameNotSet: 'Name not set - Please update your profile',
       loginRequired: 'Please log in to view your profile',
       editProfile: 'Edit Profile',
       viewMode: 'View Profile',
@@ -38,6 +38,7 @@ const Profile = () => {
       phone: 'โทรศัพท์',
       address: 'ที่อยู่',
       placeholder: 'ไม่ได้ให้ข้อมูล',
+      nameNotSet: 'ยังไม่ได้ตั้งชื่อ - กรุณาอัปเดตโปรไฟล์ของคุณ',
       loginRequired: 'กรุณาเข้าสู่ระบบเพื่อดูโปรไฟล์ของคุณ',
       editProfile: 'แก้ไขโปรไฟล์',
       viewMode: 'ดูโปรไฟล์',
@@ -76,13 +77,23 @@ const Profile = () => {
     );
   }
 
-  // Use real user profile data
+  // FIXED: Better name display logic - don't use email portion as fallback
+  const getDisplayName = () => {
+    if (userProfile?.firstName || userProfile?.lastName) {
+      return `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim();
+    }
+    return ''; // Return empty string instead of email portion
+  };
+
   const profileData = {
-    name: userProfile ? `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() || user.email?.split('@')[0] : user.email?.split('@')[0] || 'User',
+    name: getDisplayName(),
     email: user.email || '',
     phone: userProfile?.phone || '',
     address: '' // Address would come from a separate address table if implemented
   };
+
+  // Show edit mode automatically if name is not set
+  const shouldShowEdit = isEditing || (!profileData.name && !isLoading);
 
   const handleEditSave = () => {
     setIsEditing(false);
@@ -99,18 +110,20 @@ const Profile = () => {
         <div className="flex items-center justify-between mb-8">
           <h1 className="heading-premium text-3xl text-anong-dark-green">{t.title}</h1>
           
-          <Button
-            onClick={() => setIsEditing(!isEditing)}
-            variant="outline"
-            className="border-anong-sage/20 text-anong-charcoal hover:bg-anong-sage/10 font-serif"
-          >
-            <Edit className="h-4 w-4 mr-2" />
-            {isEditing ? t.viewMode : t.editProfile}
-          </Button>
+          {!shouldShowEdit && (
+            <Button
+              onClick={() => setIsEditing(true)}
+              variant="outline"
+              className="border-anong-sage/20 text-anong-charcoal hover:bg-anong-sage/10 font-serif"
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              {t.editProfile}
+            </Button>
+          )}
         </div>
         
         <div className="luxury-card p-8 mb-8">
-          {isEditing ? (
+          {shouldShowEdit ? (
             <>
               <h2 className="heading-elegant text-xl mb-6 text-anong-dark-green">{t.editProfileTitle}</h2>
               <EditProfileForm 
@@ -127,8 +140,12 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-anong-charcoal mb-2 font-serif">{t.name}</label>
-                    <p className="p-4 border border-anong-sage/20 rounded-lg bg-anong-warm-cream/50 font-serif">
-                      {profileData.name}
+                    <p className={`p-4 border border-anong-sage/20 rounded-lg font-serif ${
+                      profileData.name 
+                        ? 'bg-anong-warm-cream/50' 
+                        : 'bg-orange-50 border-orange-200 text-orange-700'
+                    }`}>
+                      {profileData.name || t.nameNotSet}
                     </p>
                   </div>
                   

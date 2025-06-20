@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -59,7 +58,6 @@ export const useAuthPageLogic = () => {
     const handleMFAStored = (event: CustomEvent) => {
       console.log('📧 AuthPageLogic: MFA session stored:', event.detail);
       const email = event.detail?.email;
-      const skipSuccessToast = event.detail?.skipSuccessToast;
       
       if (email) {
         console.log('🔄 AuthPageLogic: Switching to MFA for:', email);
@@ -68,15 +66,13 @@ export const useAuthPageLogic = () => {
         setMfaEmail(email);
         setIsCheckingMFA(false);
         
-        // Only show toast if not skipped (to prevent premature success message)
-        if (!skipSuccessToast) {
-          toast({
-            title: authFormHook.isLogin ? "MFA Required" : "Account Created!",
-            description: authFormHook.isLogin 
-              ? "Please check your email for the verification code."
-              : "Please check your email for the verification code to complete registration.",
-          });
-        }
+        // FIXED: Show appropriate message for MFA requirement, not success
+        toast({
+          title: authFormHook.isLogin ? "Verification Required" : "Account Created!",
+          description: authFormHook.isLogin 
+            ? "Please check your email for the verification code to complete sign in."
+            : "Please check your email for the verification code to complete registration.",
+        });
         
         // Clear transition state after a brief moment
         setTimeout(() => setIsTransitioning(false), 300);
@@ -141,15 +137,15 @@ export const useAuthPageLogic = () => {
   };
 
   const handleMFASuccess = () => {
-    console.log('✅ AuthPageLogic: MFA success');
+    console.log('✅ AuthPageLogic: MFA verification completed successfully');
     setIsTransitioning(true);
     setShowMFA(false);
     setMfaEmail('');
     
-    // Show success toast only after MFA completion
+    // FIXED: Only show success toast AFTER MFA verification is complete
     toast({
       title: "Successfully Signed In!",
-      description: "Welcome back! Redirecting to your dashboard...",
+      description: "Welcome back! You will be redirected shortly...",
     });
 
     // Clear transition state after toast
@@ -162,6 +158,13 @@ export const useAuthPageLogic = () => {
     setMfaEmail('');
     setIsTransitioning(false);
     mfaAuthService.clearMFASession();
+    
+    // Show cancellation message
+    toast({
+      title: "Sign In Cancelled",
+      description: "You can try signing in again.",
+      variant: "destructive",
+    });
   };
 
   const handleSwitchMode = () => {
