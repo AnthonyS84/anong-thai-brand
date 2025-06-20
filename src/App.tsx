@@ -60,7 +60,7 @@ const ChatBot = React.lazy(() =>
   import('./components/chatbot/ChatBot').catch(() => ({ default: () => null }))
 );
 const PerformanceMonitor = React.lazy(() => 
-  import('./components/PerformanceMonitor').catch(() => ({ default: () => null }))
+  import('./components/shared/PerformanceMonitor').catch(() => ({ default: () => null }))
 );
 
 // Route wrapper with faster fallback

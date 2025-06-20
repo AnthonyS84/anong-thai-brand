@@ -1,6 +1,6 @@
 
 import React from 'react';
-import NavigationBanner from '@/components/NavigationBanner';
+import NavigationBanner from '@/components/layout/NavigationBanner';
 
 const LoadingView = () => {
   return (

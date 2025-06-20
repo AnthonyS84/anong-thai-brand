@@ -9,7 +9,7 @@ import ProductGridHeader from './product/ProductGridHeader';
 import ProductGridFilters from './product/ProductGridFilters';
 import ProductGridLoading from './product/ProductGridLoading';
 import ProductGridError from './product/ProductGridError';
-import NavigationBanner from './NavigationBanner';
+import NavigationBanner from '@/components/layout/NavigationBanner';
 
 interface ProductGridProps {
   initialCategory?: string | null;

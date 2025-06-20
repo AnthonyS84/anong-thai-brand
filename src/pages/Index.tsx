@@ -1,12 +1,12 @@
 
 import React from 'react';
-import NavigationBanner from '@/components/NavigationBanner';
-import HeroBanner from '@/components/HeroBanner';
-import FeaturedProducts from '@/components/FeaturedProducts';
-import BrandStory from '@/components/BrandStory';
-import EventsBanner from '@/components/EventsBanner';
+import NavigationBanner from '@/components/layout/NavigationBanner';
+import HeroBanner from '@/components/home/HeroBanner';
+import FeaturedProducts from '@/components/home/FeaturedProducts';
+import BrandStory from '@/components/home/BrandStory';
+import EventsBanner from '@/components/events/EventsBanner';
 import RestaurantBanner from '@/components/RestaurantBanner';
-import Footer from '@/components/Footer';
+import Footer from '@/components/layout/Footer';
 
 const Index = () => {
   return (

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import NavigationBanner from '../NavigationBanner';
+import NavigationBanner from '@/components/layout/NavigationBanner';
 
 interface ProductGridLoadingProps {
   loadingText: string;

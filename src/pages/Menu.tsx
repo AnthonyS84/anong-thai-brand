@@ -1,8 +1,8 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import NavigationBanner from "@/components/NavigationBanner";
-import Footer from "@/components/Footer";
-import MenuPagesGrid from "@/components/MenuPagesGrid";
+import NavigationBanner from "@/components/layout/NavigationBanner";
+import Footer from "@/components/layout/Footer";
+import MenuPagesGrid from "@/components/menu/MenuPagesGrid";
 import { useEffect } from "react";
 
 const Menu = () => {

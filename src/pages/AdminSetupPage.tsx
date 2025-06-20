@@ -1,8 +1,8 @@
 
 import React, { useEffect } from 'react';
 import AdminSetup from '@/components/AdminSetup';
-import NavigationBanner from '@/components/NavigationBanner';
-import ProtectedAuthRoute from '@/components/ProtectedAuthRoute';
+import NavigationBanner from '@/components/layout/NavigationBanner';
+import ProtectedAuthRoute from '@/components/shared/ProtectedAuthRoute';
 
 const AdminSetupPage = () => {
   // Scroll to top when component mounts

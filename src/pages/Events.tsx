@@ -1,8 +1,8 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useState } from "react";
-import Footer from "@/components/Footer";
-import NavigationBanner from "@/components/NavigationBanner";
+import Footer from "@/components/layout/Footer";
+import NavigationBanner from "@/components/layout/NavigationBanner";
 import { motion } from "framer-motion";
 import { Calendar, MapPin, Users, Clock } from 'lucide-react';
 import { Button } from "@/components/ui/button";

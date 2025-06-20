@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import NavigationBanner from '@/components/NavigationBanner';
-import Footer from '@/components/Footer';
+import NavigationBanner from '@/components/layout/NavigationBanner';
+import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 

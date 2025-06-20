@@ -14,7 +14,7 @@ import EventManager from '@/components/admin/EventManager';
 import OrphanedUserManager from '@/components/admin/OrphanedUserManager';
 import NewsletterManager from '@/components/admin/NewsletterManager';
 import MobileAdminLayout from '@/components/admin/MobileAdminLayout';
-import ProtectedAdminRoute from '@/components/ProtectedAdminRoute';
+import ProtectedAdminRoute from '@/components/shared/ProtectedAdminRoute';
 import AdminHeader from '@/components/admin/AdminHeader';
 import AdminTabs from '@/components/admin/AdminTabs';
 import AdminOverview from '@/components/admin/AdminOverview';

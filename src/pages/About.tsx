@@ -1,8 +1,8 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import NavigationBanner from "@/components/NavigationBanner";
-import Footer from "@/components/Footer";
-import AboutContent from "@/components/AboutContent";
+import NavigationBanner from "@/components/layout/NavigationBanner";
+import Footer from "@/components/layout/Footer";
+import AboutContent from "@/components/about/AboutContent";
 import { useEffect } from "react";
 
 const About = () => {

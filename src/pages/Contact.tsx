@@ -1,8 +1,8 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import NavigationBanner from "@/components/NavigationBanner";
-import Footer from "@/components/Footer";
-import ContactInfo from "@/components/ContactInfo";
+import NavigationBanner from "@/components/layout/NavigationBanner";
+import Footer from "@/components/layout/Footer";
+import ContactInfo from "@/components/contact/ContactInfo";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Home } from "lucide-react";

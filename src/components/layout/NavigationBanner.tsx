@@ -4,11 +4,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from "@/hooks/use-toast";
-import SearchOverlay from './navigation/SearchOverlay';
-import MobileMenu from './navigation/MobileMenu';
-import LogoSection from './navigation/LogoSection';
-import DesktopNav from './navigation/DesktopNav';
-import RightActions from './navigation/RightActions';
+import SearchOverlay from '@/components/navigation/SearchOverlay';
+import MobileMenu from '@/components/navigation/MobileMenu';
+import LogoSection from '@/components/navigation/LogoSection';
+import DesktopNav from '@/components/navigation/DesktopNav';
+import RightActions from '@/components/navigation/RightActions';
 import { navigationTranslations } from '@/translations/navigation';
 
 const NavigationBanner = () => {

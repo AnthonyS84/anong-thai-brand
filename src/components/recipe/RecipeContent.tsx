@@ -5,7 +5,7 @@ import RelatedProducts from "@/components/recipe/RelatedProducts";
 import IngredientsSection from "@/components/recipe/IngredientsSection";
 import RecipeImageCard from "@/components/recipe/RecipeImageCard";
 import { BackToRecipesButton } from "@/components/recipe/BackToRecipesButton";
-import Footer from "@/components/Footer";
+import Footer from "@/components/layout/Footer";
 
 interface RecipeContentProps {
   recipe: any;

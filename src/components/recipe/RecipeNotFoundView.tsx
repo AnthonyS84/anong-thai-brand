@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { recipes } from "@/data/recipes";
-import Footer from "@/components/Footer";
+import Footer from "@/components/layout/Footer";
 
 interface RecipeNotFoundViewProps {
   id: string;

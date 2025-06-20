@@ -1,7 +1,7 @@
 
 import React, { useEffect } from "react";
 import CreateCustomerForm from "@/components/CreateCustomerForm";
-import NavigationBanner from "@/components/NavigationBanner";
+import NavigationBanner from "@/components/layout/NavigationBanner";
 
 const CreateCustomerPage: React.FC = () => {
   // Scroll to top when component mounts

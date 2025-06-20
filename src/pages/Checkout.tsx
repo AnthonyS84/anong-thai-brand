@@ -2,8 +2,8 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCart } from "@/contexts/CartContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import NavigationBanner from "@/components/NavigationBanner";
-import Footer from "@/components/Footer";
+import NavigationBanner from "@/components/layout/NavigationBanner";
+import Footer from "@/components/layout/Footer";
 import FrequentlyBoughtItems from "@/components/checkout/FrequentlyBoughtItems";
 import OrderSuccess from "@/components/checkout/OrderSuccess";
 import { ContactInfoForm } from "@/components/checkout/ContactInfoForm";

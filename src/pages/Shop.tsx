@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import Footer from "@/components/Footer";
+import Footer from "@/components/layout/Footer";
 import ProductGrid from "@/components/ProductGrid";
 
 const Shop = () => {

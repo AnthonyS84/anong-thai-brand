@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
-import NavigationBanner from '@/components/NavigationBanner';
-import Footer from '@/components/Footer';
+import NavigationBanner from '@/components/layout/NavigationBanner';
+import Footer from '@/components/layout/Footer';
 import EditProfileForm from '@/components/EditProfileForm';
 import { Button } from "@/components/ui/button";
 import { Edit } from 'lucide-react';

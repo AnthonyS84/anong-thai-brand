@@ -1,6 +1,6 @@
 
 import React from 'react';
-import ProductCard from './ProductCard';
+import ProductCard from '@/components/ProductCard';
 import { useSupabaseProducts } from '@/hooks/useSupabaseProducts';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useLanguage } from '@/contexts/LanguageContext';

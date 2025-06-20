@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
-import NavigationBanner from '@/components/NavigationBanner';
-import Footer from '@/components/Footer';
+import NavigationBanner from '@/components/layout/NavigationBanner';
+import Footer from '@/components/layout/Footer';
 import UserMenu from '@/components/navigation/UserMenu';
 import { User, ShoppingBag, Settings, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';

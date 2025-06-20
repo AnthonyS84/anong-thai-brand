@@ -1,8 +1,8 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import Footer from "@/components/Footer";
+import Footer from "@/components/layout/Footer";
 import ProductDetail from "@/components/ProductDetail";
-import NavigationBanner from "@/components/NavigationBanner";
+import NavigationBanner from "@/components/layout/NavigationBanner";
 import { BackToShopButton } from "@/components/product/BackToShopButton";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";

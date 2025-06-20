@@ -1,8 +1,8 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect } from "react";
-import NavigationBanner from "@/components/NavigationBanner";
-import Footer from "@/components/Footer";
+import NavigationBanner from "@/components/layout/NavigationBanner";
+import Footer from "@/components/layout/Footer";
 
 const Shipping = () => {
   const { language } = useLanguage();
