@@ -10,11 +10,12 @@ const HeroBanner = () => {
   const { language } = useLanguage();
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   
-  // Preload hero image immediately
+  // Preload hero image immediately for better performance
   useEffect(() => {
     const img = new Image();
     img.src = '/lovable-uploads/214ef46d-cc98-40a7-9f35-00dff6eb2e36.png';
     img.onload = () => setIsImageLoaded(true);
+    img.onerror = () => setIsImageLoaded(true); // Still show content if image fails
   }, []);
   
   const translations = {
@@ -48,7 +49,7 @@ const HeroBanner = () => {
       opacity: 1, 
       y: 0,
       transition: { 
-        duration: 0.8, 
+        duration: 0.6, 
         ease: [0.25, 0.1, 0.25, 1]
       }
     }
@@ -59,36 +60,35 @@ const HeroBanner = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.2
+        staggerChildren: 0.2,
+        delayChildren: 0.1
       }
     }
   };
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
-      {/* Fast loading background with placeholder */}
+      {/* Optimized background loading */}
       <div className="absolute inset-0 bg-anong-black">
-        {/* Placeholder background while image loads */}
+        {/* Fast-loading gradient placeholder */}
         <div className="absolute inset-0 bg-gradient-to-br from-anong-black/90 via-anong-charcoal/80 to-anong-deep-green/70" />
         
         {/* Hero image with optimized loading */}
-        <div 
-          className={`absolute inset-0 transition-opacity duration-500 ${
-            isImageLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{ 
-            backgroundImage: isImageLoaded ? "url('/lovable-uploads/214ef46d-cc98-40a7-9f35-00dff6eb2e36.png')" : 'none',
-            backgroundSize: "cover",
-            backgroundPosition: "center center",
-            backgroundRepeat: "no-repeat",
-            filter: "brightness(0.65) contrast(1.15)"
-          }}
-        >
-          {/* Premium overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-anong-black/70 via-anong-black/50 to-anong-deep-green/60"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-anong-black/50 via-transparent to-transparent"></div>
-        </div>
+        {isImageLoaded && (
+          <div 
+            className="absolute inset-0 transition-opacity duration-300 opacity-100"
+            style={{ 
+              backgroundImage: "url('/lovable-uploads/214ef46d-cc98-40a7-9f35-00dff6eb2e36.png')",
+              backgroundSize: "cover",
+              backgroundPosition: "center center",
+              backgroundRepeat: "no-repeat",
+              filter: "brightness(0.65) contrast(1.15)"
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-anong-black/70 via-anong-black/50 to-anong-deep-green/60"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-anong-black/50 via-transparent to-transparent"></div>
+          </div>
+        )}
       </div>
       
       {/* Content */}
@@ -100,7 +100,7 @@ const HeroBanner = () => {
             animate="visible"
             variants={staggerContainer}
           >
-            {/* ANONG logo display - load immediately */}
+            {/* ANONG logo - preload critical */}
             <motion.div 
               className="mb-8 md:mb-12"
               variants={fadeInUp}
@@ -111,6 +111,7 @@ const HeroBanner = () => {
                   alt="ANONG Premium Logo"
                   className="w-full h-full object-contain drop-shadow-xl"
                   loading="eager"
+                  fetchPriority="high"
                 />
               </div>
               <h1 className="anong-heading text-3xl md:text-4xl text-anong-gold tracking-[0.2em] font-medium mb-2">
@@ -139,13 +140,13 @@ const HeroBanner = () => {
               {t.description}
             </motion.p>
             
-            {/* Elegant Thai lotus divider */}
+            {/* Elegant divider */}
             <motion.div 
               className="flex items-center justify-center mb-10 md:mb-18"
               variants={fadeInUp}
             >
               <div className="w-16 sm:w-24 md:w-40 h-px bg-gradient-to-r from-transparent via-anong-gold/70 to-anong-gold/40"></div>
-              <div className="mx-6 sm:mx-10 md:mx-14 thai-lotus-divider w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 opacity-90 drop-shadow-sm"></div>
+              <div className="mx-6 sm:mx-10 md:mx-14 w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 opacity-90 drop-shadow-sm bg-anong-gold/20 rounded-full"></div>
               <div className="w-16 sm:w-24 md:w-40 h-px bg-gradient-to-l from-transparent via-anong-gold/70 to-anong-gold/40"></div>
             </motion.div>
             
@@ -181,7 +182,7 @@ const HeroBanner = () => {
               className="mt-12 sm:mt-16 md:mt-24 flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 px-4"
               variants={fadeInUp}
             >
-              {[t.premiumQuality, t.handcrafted, t.authenticThai].map((badge, index) => (
+              {[t.premiumQuality, t.handcrafted, t.authenticThai].map((badge) => (
                 <div 
                   key={badge}
                   className="bg-white/15 text-white border border-white/30 px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-medium tracking-wide backdrop-blur-sm shadow-lg hover:bg-anong-gold/20 hover:border-anong-gold transition-all duration-300"

@@ -1,74 +1,84 @@
-
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Calendar, MapPin, Users, Edit, Trash2, Eye } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Search, Calendar, MapPin, Users, Plus, Edit2, Trash2, Download } from 'lucide-react';
+import { CreateEventDialog } from './events/CreateEventDialog';
+import { EditEventDialog } from './events/EditEventDialog';
+import { DeleteEventDialog } from './events/DeleteEventDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import CreateEventDialog from './events/CreateEventDialog';
-import EditEventDialog from './events/EditEventDialog';
-import DeleteEventDialog from './events/DeleteEventDialog';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Event {
   id: string;
   title: string;
   description: string | null;
-  short_description: string | null;
   start_date: string;
   end_date: string | null;
   location: string | null;
-  image_url: string | null;
-  is_featured: boolean;
-  is_active: boolean;
   max_participants: number | null;
   current_participants: number;
-  price: number;
-  category: string;
+  price: number | null;
+  is_featured: boolean;
+  category: string | null;
+  image_url: string | null;
   created_at: string;
+  updated_at: string;
 }
 
 const EventManager = () => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const isMobile = useIsMobile();
 
-  const loadEvents = async () => {
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
     try {
-      setIsLoading(true);
       const { data, error } = await supabase
         .from('events')
         .select('*')
-        .order('start_date', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setEvents(data || []);
+      
+      // Transform data to handle null values properly
+      const transformedEvents: Event[] = data.map(event => ({
+        ...event,
+        current_participants: event.current_participants || 0,
+        is_featured: event.is_featured || false
+      }));
+      
+      setEvents(transformedEvents);
     } catch (error) {
-      console.error('Error loading events:', error);
+      console.error('Error fetching events:', error);
       toast({
-        title: "Error",
-        description: "Failed to load events",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load events',
+        variant: 'destructive',
       });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadEvents();
-  }, []);
-
   const handleEdit = (event: Event) => {
     setSelectedEvent(event);
-    setEditDialogOpen(true);
+    setShowEditDialog(true);
   };
 
   const handleDelete = (event: Event) => {
     setSelectedEvent(event);
-    setDeleteDialogOpen(true);
+    setShowDeleteDialog(true);
   };
 
   const handleToggleActive = async (event: Event) => {
@@ -85,7 +95,7 @@ const EventManager = () => {
         description: `Event ${event.is_active ? 'deactivated' : 'activated'} successfully`,
       });
       
-      loadEvents();
+      fetchEvents();
     } catch (error) {
       console.error('Error updating event:', error);
       toast({
@@ -106,7 +116,7 @@ const EventManager = () => {
     });
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-center">
@@ -125,7 +135,7 @@ const EventManager = () => {
           <h2 className="text-2xl font-bold text-gray-900">Event Management</h2>
           <p className="text-gray-600">Manage your events and workshops</p>
         </div>
-        <Button onClick={() => setCreateDialogOpen(true)} className="flex items-center gap-2">
+        <Button onClick={() => setShowCreateDialog(true)} className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
           Create Event
         </Button>
@@ -138,7 +148,7 @@ const EventManager = () => {
             <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-400" />
             <h3 className="text-lg font-semibold mb-2">No events yet</h3>
             <p className="text-gray-600 mb-4">Create your first event to get started</p>
-            <Button onClick={() => setCreateDialogOpen(true)}>
+            <Button onClick={() => setShowCreateDialog(true)}>
               <Plus className="w-4 h-4 mr-2" />
               Create Event
             </Button>
@@ -217,7 +227,7 @@ const EventManager = () => {
                     onClick={() => handleEdit(event)}
                     className="flex items-center gap-1"
                   >
-                    <Edit className="w-3 h-3" />
+                    <Edit2 className="w-3 h-3" />
                     Edit
                   </Button>
                   <Button
@@ -238,24 +248,24 @@ const EventManager = () => {
 
       {/* Dialogs */}
       <CreateEventDialog
-        open={createDialogOpen}
-        onOpenChange={setCreateDialogOpen}
-        onSuccess={loadEvents}
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+        onSuccess={fetchEvents}
       />
 
       {selectedEvent && (
         <>
           <EditEventDialog
-            open={editDialogOpen}
-            onOpenChange={setEditDialogOpen}
+            open={showEditDialog}
+            onOpenChange={setShowEditDialog}
             event={selectedEvent}
-            onSuccess={loadEvents}
+            onSuccess={fetchEvents}
           />
           <DeleteEventDialog
-            open={deleteDialogOpen}
-            onOpenChange={setDeleteDialogOpen}
+            open={showDeleteDialog}
+            onOpenChange={setShowDeleteDialog}
             event={selectedEvent}
-            onSuccess={loadEvents}
+            onSuccess={fetchEvents}
           />
         </>
       )}

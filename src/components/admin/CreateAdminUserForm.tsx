@@ -1,55 +1,91 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { UserPlus } from 'lucide-react';
-import UserFormFields from './user-creation/UserFormFields';
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2 } from 'lucide-react';
 import { useAdminUserCreation } from './user-creation/useAdminUserCreation';
-import type { UserFormData } from './user-creation/UserFormFields';
 
-interface CreateAdminUserFormProps {
-  onUserCreated: () => void;
-}
+const CreateAdminUserForm = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('admin');
+  const { createUser, isLoading, error, success } = useAdminUserCreation();
 
-const CreateAdminUserForm = ({ onUserCreated }: CreateAdminUserFormProps) => {
-  const [formData, setFormData] = useState<UserFormData>({
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: ''
-  });
-
-  const { createAdminUser, isCreating } = useAdminUserCreation(() => {
-    setFormData({ email: '', password: '', firstName: '', lastName: '' });
-    onUserCreated();
-  });
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = () => {
-    createAdminUser(formData);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await createUser(email, password, role);
   };
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <UserPlus className="h-5 w-5" />
-          Create New Admin User
-        </CardTitle>
+        <CardTitle>Create Admin User</CardTitle>
+        <CardDescription>
+          Create a new admin user with specific roles and permissions.
+        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <UserFormFields formData={formData} onInputChange={handleInputChange} />
-        
-        <Button 
-          onClick={handleSubmit}
-          disabled={isCreating || !formData.email || !formData.password}
-          className="w-full"
-        >
-          {isCreating ? "Creating..." : "Create Admin User"}
-        </Button>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {success && (
+            <Alert>
+              <AlertDescription>User created successfully!</AlertDescription>
+            </Alert>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="admin@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="role">Role</Label>
+            <Select onValueChange={setRole} defaultValue={role}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="admin">Admin</SelectItem>
+                <SelectItem value="editor">Editor</SelectItem>
+                <SelectItem value="viewer">Viewer</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button disabled={isLoading} className="w-full">
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              'Create User'
+            )}
+          </Button>
+        </form>
       </CardContent>
     </Card>
   );

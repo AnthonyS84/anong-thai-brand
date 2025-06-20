@@ -524,6 +524,27 @@ export type Database = {
           },
         ]
       }
+      password_history: {
+        Row: {
+          created_at: string
+          id: string
+          password_hash: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          password_hash: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          password_hash?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       product_reviews: {
         Row: {
           content: string | null
@@ -668,6 +689,9 @@ export type Database = {
         Row: {
           created_at: string
           email: string
+          email_verification_attempts: number | null
+          email_verification_sent_at: string | null
+          email_verified_at: string | null
           first_name: string | null
           id: string
           last_name: string | null
@@ -677,6 +701,9 @@ export type Database = {
         Insert: {
           created_at?: string
           email: string
+          email_verification_attempts?: number | null
+          email_verification_sent_at?: string | null
+          email_verified_at?: string | null
           first_name?: string | null
           id: string
           last_name?: string | null
@@ -686,6 +713,9 @@ export type Database = {
         Update: {
           created_at?: string
           email?: string
+          email_verification_attempts?: number | null
+          email_verification_sent_at?: string | null
+          email_verified_at?: string | null
           first_name?: string | null
           id?: string
           last_name?: string | null
@@ -927,6 +957,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      is_email_verified: {
+        Args: { p_user_id: string }
+        Returns: boolean
+      }
       link_orphaned_user: {
         Args: {
           _user_id: string
@@ -945,6 +979,10 @@ export type Database = {
           p_success?: boolean
         }
         Returns: string
+      }
+      mark_email_verified: {
+        Args: { p_user_id: string }
+        Returns: undefined
       }
       restore_product_stock: {
         Args: { product_id: string; quantity_to_restore: number }
