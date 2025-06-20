@@ -1,32 +1,26 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+
+import React, { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
-interface FormData {
-  fullName: string;
-  email: string;
-}
-
-interface CreateCustomerFormProps {}
-
-const CreateCustomerForm: React.FC<CreateCustomerFormProps> = () => {
-  const [formData, setFormData] = useState<FormData>({
+export default function CreateCustomerForm() {
+  const [formData, setFormData] = useState({
     fullName: '',
     email: '',
   });
 
-  const [message, setMessage] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  function handleChange(e) {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
-  };
+  }
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  async function handleSubmit(e) {
     e.preventDefault();
     setMessage('');
     setError('');
@@ -80,7 +74,7 @@ const CreateCustomerForm: React.FC<CreateCustomerFormProps> = () => {
         description: "Customer record created successfully.",
       });
 
-    } catch (err: any) {
+    } catch (err) {
       console.error('Unexpected error:', err);
       setError(err.message || 'Failed to create customer');
       
@@ -92,7 +86,7 @@ const CreateCustomerForm: React.FC<CreateCustomerFormProps> = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   return (
     <div style={{ maxWidth: 400, margin: 'auto' }}>
@@ -133,6 +127,4 @@ const CreateCustomerForm: React.FC<CreateCustomerFormProps> = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
-};
-
-export default CreateCustomerForm;
+}
