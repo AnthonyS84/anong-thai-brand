@@ -57,7 +57,7 @@ const Terms = React.lazy(() => import("./pages/Terms"));
 
 // Heavy features - load on demand but not blocking
 const ChatBot = React.lazy(() => 
-  import('./components/chatbot/ChatBot').catch(() => ({ default: () => null }))
+  import('./components/chatbot/EnhancedChatBot').catch(() => ({ default: () => null }))
 );
 const PerformanceMonitor = React.lazy(() => 
   import('./components/shared/PerformanceMonitor').catch(() => ({ default: () => null }))
