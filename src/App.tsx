@@ -8,6 +8,7 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { CurrencyProvider } from './contexts/CurrencyContext';
 import { CartProvider } from './contexts/CartContext';
 import { AuthProvider } from './hooks/useAuth';
+import './utils/errorHandler'; // Global error handling for cleaner console
 
 // Faster loading component
 const QuickLoader = () => (
