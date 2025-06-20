@@ -7,21 +7,7 @@ import CustomerManagerHeader from './customer/CustomerManagerHeader';
 import CustomerEmptyState from './customer/CustomerEmptyState';
 import CustomerPagination from './customer/CustomerPagination';
 import { useCustomerData } from '@/hooks/useCustomerData';
-
-interface SupabaseCustomer {
-  id: number;
-  fullname: string;
-  email: string;
-  phone?: string;
-  total_spent: number;
-  total_orders: number;
-  last_order_date?: string;
-  created_at: string;
-  user_id?: string;
-  first_name?: string;
-  last_name?: string;
-  is_active?: boolean;
-}
+import { SupabaseCustomer } from '@/services/types/supabaseTypes';
 
 const CustomerManager = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<SupabaseCustomer | null>(null);
@@ -39,7 +25,7 @@ const CustomerManager = () => {
   } = useCustomerData();
 
   const handleViewCustomer = (customer: SupabaseCustomer) => {
-    // Ensure customer has all required properties
+    // Ensure customer has all required properties for the dialog
     const fullCustomer: SupabaseCustomer = {
       ...customer,
       first_name: customer.first_name || '',

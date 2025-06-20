@@ -13,7 +13,7 @@ interface EventData {
   id: string;
   title: string;
   description: string | null;
-  short_description?: string;
+  short_description: string;
   start_date: string;
   end_date: string | null;
   location: string | null;
@@ -21,7 +21,7 @@ interface EventData {
   current_participants: number;
   price: number | null;
   is_featured: boolean;
-  is_active?: boolean;
+  is_active: boolean;
   category: string | null;
   image_url: string | null;
   created_at: string;
@@ -56,7 +56,7 @@ const EventManager = () => {
         current_participants: event.current_participants || 0,
         is_featured: event.is_featured || false,
         is_active: event.is_active ?? true,
-        short_description: event.short_description || undefined
+        short_description: event.short_description || ''
       }));
       
       setEvents(transformedEvents);
@@ -86,14 +86,14 @@ const EventManager = () => {
     try {
       const { error } = await supabase
         .from('events')
-        .update({ is_active: !(event.is_active ?? true) })
+        .update({ is_active: !event.is_active })
         .eq('id', event.id);
 
       if (error) throw error;
       
       toast({
         title: "Success",
-        description: `Event ${(event.is_active ?? true) ? 'deactivated' : 'activated'} successfully`,
+        description: `Event ${event.is_active ? 'deactivated' : 'activated'} successfully`,
       });
       
       fetchEvents();
@@ -158,7 +158,7 @@ const EventManager = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((event) => (
-            <Card key={event.id} className={`${!(event.is_active ?? true) ? 'opacity-60' : ''}`}>
+            <Card key={event.id} className={`${!event.is_active ? 'opacity-60' : ''}`}>
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-lg line-clamp-2">{event.title}</CardTitle>
@@ -169,11 +169,11 @@ const EventManager = () => {
                       </span>
                     )}
                     <span className={`text-xs px-2 py-1 rounded ${
-                      (event.is_active ?? true)
+                      event.is_active
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-red-100 text-red-800'
                     }`}>
-                      {(event.is_active ?? true) ? 'Active' : 'Inactive'}
+                      {event.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </div>
                 </div>
@@ -220,7 +220,7 @@ const EventManager = () => {
                     className="flex items-center gap-1"
                   >
                     <Eye className="w-3 h-3" />
-                    {(event.is_active ?? true) ? 'Hide' : 'Show'}
+                    {event.is_active ? 'Hide' : 'Show'}
                   </Button>
                   <Button
                     variant="outline"

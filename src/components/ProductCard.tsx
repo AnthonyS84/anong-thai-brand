@@ -58,7 +58,7 @@ const ProductCard = ({ product, priority = false }: ProductCardProps) => {
         id: product.id,
         name: product.name,
         price: product.price,
-        image: actualImage
+        images: product.images || [actualImage]
       }, 1);
     }
   };
