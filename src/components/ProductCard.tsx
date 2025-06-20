@@ -54,12 +54,8 @@ const ProductCard = ({ product, priority = false }: ProductCardProps) => {
 
   const handleAddToCart = () => {
     if (isInStock) {
-      addItem({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        images: product.images || [actualImage]
-      }, 1);
+      // Pass the complete product object instead of creating a partial one
+      addItem(product, 1);
     }
   };
 
