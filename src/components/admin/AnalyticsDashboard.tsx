@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,7 +25,7 @@ interface ProductSales {
 const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))'];
 
 const AnalyticsDashboard = () => {
-  const { data: products, isLoading: isLoadingProducts, error: errorProducts } = useSupabaseProducts();
+  const { products, isLoading: isLoadingProducts } = useSupabaseProducts();
 
   const totalProducts = products?.length || 0;
 

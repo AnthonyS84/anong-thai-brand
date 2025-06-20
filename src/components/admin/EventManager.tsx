@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Calendar, MapPin, Users, Plus, Edit2, Trash2, Download } from 'lucide-react';
-import { CreateEventDialog } from './events/CreateEventDialog';
-import { EditEventDialog } from './events/EditEventDialog';
-import { DeleteEventDialog } from './events/DeleteEventDialog';
+import { Calendar, MapPin, Users, Plus, Edit2, Trash2, Eye } from 'lucide-react';
+import CreateEventDialog from './events/CreateEventDialog';
+import EditEventDialog from './events/EditEventDialog';
+import DeleteEventDialog from './events/DeleteEventDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Event {
   id: string;
   title: string;
   description: string | null;
+  short_description?: string;
   start_date: string;
   end_date: string | null;
   location: string | null;
@@ -22,6 +22,7 @@ interface Event {
   current_participants: number;
   price: number | null;
   is_featured: boolean;
+  is_active?: boolean;
   category: string | null;
   image_url: string | null;
   created_at: string;
@@ -36,7 +37,6 @@ const EventManager = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchEvents();
@@ -55,7 +55,8 @@ const EventManager = () => {
       const transformedEvents: Event[] = data.map(event => ({
         ...event,
         current_participants: event.current_participants || 0,
-        is_featured: event.is_featured || false
+        is_featured: event.is_featured || false,
+        is_active: event.is_active ?? true
       }));
       
       setEvents(transformedEvents);
@@ -85,14 +86,14 @@ const EventManager = () => {
     try {
       const { error } = await supabase
         .from('events')
-        .update({ is_active: !event.is_active })
+        .update({ is_active: !(event.is_active ?? true) })
         .eq('id', event.id);
 
       if (error) throw error;
       
       toast({
         title: "Success",
-        description: `Event ${event.is_active ? 'deactivated' : 'activated'} successfully`,
+        description: `Event ${(event.is_active ?? true) ? 'deactivated' : 'activated'} successfully`,
       });
       
       fetchEvents();
@@ -157,7 +158,7 @@ const EventManager = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((event) => (
-            <Card key={event.id} className={`${!event.is_active ? 'opacity-60' : ''}`}>
+            <Card key={event.id} className={`${!(event.is_active ?? true) ? 'opacity-60' : ''}`}>
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-lg line-clamp-2">{event.title}</CardTitle>
@@ -168,11 +169,11 @@ const EventManager = () => {
                       </span>
                     )}
                     <span className={`text-xs px-2 py-1 rounded ${
-                      event.is_active 
+                      (event.is_active ?? true)
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-red-100 text-red-800'
                     }`}>
-                      {event.is_active ? 'Active' : 'Inactive'}
+                      {(event.is_active ?? true) ? 'Active' : 'Inactive'}
                     </span>
                   </div>
                 </div>
@@ -204,7 +205,7 @@ const EventManager = () => {
                     </div>
                   )}
                   
-                  {event.price > 0 && (
+                  {event.price && event.price > 0 && (
                     <div className="text-lg font-semibold text-anong-gold">
                       R {event.price}
                     </div>
@@ -219,7 +220,7 @@ const EventManager = () => {
                     className="flex items-center gap-1"
                   >
                     <Eye className="w-3 h-3" />
-                    {event.is_active ? 'Hide' : 'Show'}
+                    {(event.is_active ?? true) ? 'Hide' : 'Show'}
                   </Button>
                   <Button
                     variant="outline"

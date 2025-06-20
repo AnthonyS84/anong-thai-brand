@@ -1,16 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Search, Eye, Edit2, Trash2, UserPlus, Download, Filter } from 'lucide-react';
-import { CustomerTable } from './customer/CustomerTable';
-import { CustomerDetailsDialog } from './customer/CustomerDetailsDialog';
-import { CustomerManagerHeader } from './customer/CustomerManagerHeader';
-import { CustomerEmptyState } from './customer/CustomerEmptyState';
-import { CustomerPagination } from './customer/CustomerPagination';
+
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import CustomerTable from './customer/CustomerTable';
+import CustomerDetailsDialog from './customer/CustomerDetailsDialog';
+import CustomerManagerHeader from './customer/CustomerManagerHeader';
+import CustomerEmptyState from './customer/CustomerEmptyState';
+import CustomerPagination from './customer/CustomerPagination';
 import { useCustomerData } from '@/hooks/useCustomerData';
-import { useIsMobile } from '@/hooks/use-mobile';
+
+interface SupabaseCustomer {
+  id: number;
+  fullname: string;
+  email: string;
+  phone?: string;
+  total_spent: number;
+  total_orders: number;
+  last_order_date?: string;
+  created_at: string;
+  user_id?: string;
+}
 
 const CustomerManager = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<SupabaseCustomer | null>(null);

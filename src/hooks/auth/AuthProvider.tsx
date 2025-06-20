@@ -1,5 +1,5 @@
 
-import React, { createContext } from 'react';
+import { createContext } from 'react';
 import { useAuthState } from './useAuthState';
 import { useAuthOperations } from './useAuthOperations';
 import { AuthContextType } from './types';
@@ -24,10 +24,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signIn,
     signOut,
     resetPassword,
-    updateProfile
+    updateProfile,
+    changePassword,
+    resendVerificationEmail,
+    verifyEmail,
+    getEmailVerificationStatus,
+    requiresEmailVerification,
+    validatePassword,
+    validatePasswordStrength
   } = useAuthOperations(user, setUser, setSession, setUserProfile, setMfaPending);
 
-  const value = {
+  const value: AuthContextType = {
     user,
     session,
     userProfile,
@@ -37,6 +44,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     resetPassword,
     updateProfile,
+    changePassword,
+    resendVerificationEmail,
+    verifyEmail,
+    getEmailVerificationStatus,
+    requiresEmailVerification,
+    validatePassword,
+    validatePasswordStrength,
     mfaPending,
   };
 

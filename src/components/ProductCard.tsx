@@ -31,7 +31,7 @@ const getProductImage = (productName: string) => {
 };
 
 const ProductCard = ({ product, priority = false }: ProductCardProps) => {
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const { formatPrice } = useCurrency();
   const { language } = useLanguage();
 
@@ -49,12 +49,12 @@ const ProductCard = ({ product, priority = false }: ProductCardProps) => {
   };
 
   const t = translations[language];
-  const actualImage = product.image || getProductImage(product.name);
+  const actualImage = product.images?.[0] || getProductImage(product.name);
   const isInStock = (product.stock_quantity || 0) > 0;
 
   const handleAddToCart = () => {
     if (isInStock) {
-      addToCart({
+      addItem({
         id: product.id,
         name: product.name,
         price: product.price,

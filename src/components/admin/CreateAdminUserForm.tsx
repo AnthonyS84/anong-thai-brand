@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,11 +13,11 @@ const CreateAdminUserForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('admin');
-  const { createUser, isLoading, error, success } = useAdminUserCreation();
+  const { createAdminUser, isCreating } = useAdminUserCreation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await createUser(email, password, role);
+    await createAdminUser({ email, password, firstName: '', lastName: '' });
   };
 
   return (
@@ -29,18 +30,6 @@ const CreateAdminUserForm = () => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {success && (
-            <Alert>
-              <AlertDescription>User created successfully!</AlertDescription>
-            </Alert>
-          )}
-
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -75,8 +64,8 @@ const CreateAdminUserForm = () => {
               </SelectContent>
             </Select>
           </div>
-          <Button disabled={isLoading} className="w-full">
-            {isLoading ? (
+          <Button disabled={isCreating} className="w-full">
+            {isCreating ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Creating...
