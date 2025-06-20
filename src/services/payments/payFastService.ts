@@ -34,15 +34,43 @@ export class PayFastService {
 
   constructor() {
     console.log('🏦 PayFastService: Initializing service');
-    // In production, these would come from Supabase secrets
     this.loadCredentials();
   }
 
-  private loadCredentials() {
-    console.log('🔑 PayFastService: Loading credentials');
-    // For now, return null - will be populated when API credentials are added
-    this.credentials = null;
-    console.log('🔑 PayFastService: Credentials loaded:', this.credentials ? 'Yes' : 'No');
+  private async loadCredentials() {
+    console.log('🔑 PayFastService: Loading secure credentials from Supabase');
+    
+    try {
+      // Load credentials from Supabase Edge Function that accesses secrets
+      const response = await fetch('/functions/v1/get-payfast-config', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const config = await response.json();
+        if (config.merchantId && config.merchantKey) {
+          this.credentials = {
+            merchantId: config.merchantId,
+            merchantKey: config.merchantKey,
+            passphrase: config.passphrase,
+            sandbox: config.sandbox || false
+          };
+          console.log('✅ PayFastService: Secure credentials loaded successfully');
+        } else {
+          console.log('⚠️ PayFastService: Credentials not configured in Supabase secrets');
+          this.credentials = null;
+        }
+      } else {
+        console.log('⚠️ PayFastService: Could not load credentials from Edge Function');
+        this.credentials = null;
+      }
+    } catch (error) {
+      console.error('❌ PayFastService: Error loading credentials:', error);
+      this.credentials = null;
+    }
   }
 
   public isApiIntegrationEnabled(): boolean {
@@ -67,7 +95,6 @@ export class PayFastService {
     }
 
     try {
-      // When API is enabled, this would create actual PayFast payment
       const paymentData = this.buildPaymentData(request);
       const paymentUrl = this.generatePaymentUrl(paymentData);
 
@@ -108,8 +135,27 @@ export class PayFastService {
       name_last: request.customerLastName || ''
     };
 
-    // Add signature when API is fully implemented
+    // Add signature when passphrase is available
+    if (this.credentials.passphrase) {
+      paymentData.signature = this.generateSignature(paymentData);
+    }
+
     return paymentData;
+  }
+
+  private generateSignature(data: any): string {
+    if (!this.credentials?.passphrase) return '';
+    
+    // Build parameter string for signature
+    const paramString = Object.keys(data)
+      .filter(key => key !== 'signature' && data[key] !== '')
+      .sort()
+      .map(key => `${key}=${encodeURIComponent(data[key])}`)
+      .join('&') + `&passphrase=${encodeURIComponent(this.credentials.passphrase)}`;
+
+    // Generate MD5 hash (PayFast requirement)
+    const crypto = require('crypto');
+    return crypto.createHash('md5').update(paramString).digest('hex');
   }
 
   private generatePaymentUrl(paymentData: any): string {
@@ -130,13 +176,31 @@ export class PayFastService {
     }
 
     try {
-      // When API is enabled, this would verify the payment with PayFast
-      // For now, return true for testing
+      // Verify signature if passphrase is available
+      if (this.credentials?.passphrase) {
+        const isValid = this.verifySignature(pfData);
+        if (!isValid) {
+          console.error('❌ PayFast signature verification failed');
+          return false;
+        }
+      }
+
+      // Additional verification logic would go here
       return true;
     } catch (error) {
       console.error('❌ PayFast payment verification failed:', error);
       return false;
     }
+  }
+
+  private verifySignature(data: any): boolean {
+    if (!this.credentials?.passphrase) return true;
+    
+    const receivedSignature = data.signature;
+    delete data.signature;
+    
+    const expectedSignature = this.generateSignature(data);
+    return receivedSignature === expectedSignature;
   }
 
   public generatePaymentReference(orderNumber: string): string {
