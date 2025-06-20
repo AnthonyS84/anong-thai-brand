@@ -18,6 +18,9 @@ interface SupabaseCustomer {
   last_order_date?: string;
   created_at: string;
   user_id?: string;
+  first_name?: string;
+  last_name?: string;
+  is_active?: boolean;
 }
 
 const CustomerManager = () => {
@@ -36,7 +39,14 @@ const CustomerManager = () => {
   } = useCustomerData();
 
   const handleViewCustomer = (customer: SupabaseCustomer) => {
-    setSelectedCustomer(customer);
+    // Ensure customer has all required properties
+    const fullCustomer: SupabaseCustomer = {
+      ...customer,
+      first_name: customer.first_name || '',
+      last_name: customer.last_name || '',
+      is_active: customer.is_active ?? true
+    };
+    setSelectedCustomer(fullCustomer);
     setIsDialogOpen(true);
   };
 

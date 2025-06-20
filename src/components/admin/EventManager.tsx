@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Users, Plus, Edit2, Trash2, Eye } from 'lucide-react';
 import CreateEventDialog from './events/CreateEventDialog';
 import EditEventDialog from './events/EditEventDialog';
@@ -10,7 +9,7 @@ import DeleteEventDialog from './events/DeleteEventDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
-interface Event {
+interface EventData {
   id: string;
   title: string;
   description: string | null;
@@ -30,10 +29,10 @@ interface Event {
 }
 
 const EventManager = () => {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -52,11 +51,12 @@ const EventManager = () => {
       if (error) throw error;
       
       // Transform data to handle null values properly
-      const transformedEvents: Event[] = data.map(event => ({
+      const transformedEvents: EventData[] = data.map(event => ({
         ...event,
         current_participants: event.current_participants || 0,
         is_featured: event.is_featured || false,
-        is_active: event.is_active ?? true
+        is_active: event.is_active ?? true,
+        short_description: event.short_description || undefined
       }));
       
       setEvents(transformedEvents);
@@ -72,17 +72,17 @@ const EventManager = () => {
     }
   };
 
-  const handleEdit = (event: Event) => {
+  const handleEdit = (event: EventData) => {
     setSelectedEvent(event);
     setShowEditDialog(true);
   };
 
-  const handleDelete = (event: Event) => {
+  const handleDelete = (event: EventData) => {
     setSelectedEvent(event);
     setShowDeleteDialog(true);
   };
 
-  const handleToggleActive = async (event: Event) => {
+  const handleToggleActive = async (event: EventData) => {
     try {
       const { error } = await supabase
         .from('events')

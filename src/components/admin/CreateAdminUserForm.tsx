@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import { useAdminUserCreation } from './user-creation/useAdminUserCreation';
 
@@ -13,7 +12,13 @@ const CreateAdminUserForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('admin');
-  const { createAdminUser, isCreating } = useAdminUserCreation();
+  
+  const { createAdminUser, isCreating } = useAdminUserCreation(() => {
+    // Reset form on success
+    setEmail('');
+    setPassword('');
+    setRole('admin');
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
