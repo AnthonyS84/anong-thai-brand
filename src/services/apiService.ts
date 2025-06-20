@@ -82,6 +82,11 @@ class ApiService {
     return this.request<ProductsResponse>(endpoint);
   }
 
+  async getProduct(id: string): Promise<{ product: Product }> {
+    const endpoint = `/api/products/${id}`;
+    return this.request<{ product: Product }>(endpoint);
+  }
+
   async createCustomer(customerData: CreateCustomerRequest): Promise<Customer> {
     return this.request<Customer>('/api/customers', {
       method: 'POST',
