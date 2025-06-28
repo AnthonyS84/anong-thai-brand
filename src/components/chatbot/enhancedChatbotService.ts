@@ -1,4 +1,3 @@
-
 import { orderService } from '@/services/orders/orderService';
 import { chatbotResponses } from './chatbotResponses';
 
@@ -18,12 +17,12 @@ class EnhancedChatbotService {
     
     // Check for order-related queries
     if (this.isOrderStatusQuery(lowerMessage)) {
-      return this.handleOrderStatusQuery(userMessage);
+      return await this.handleOrderStatusQuery(userMessage);
     }
     
     // Check for order tracking queries
     if (this.isOrderTrackingQuery(lowerMessage)) {
-      return this.handleOrderTrackingQuery(userMessage);
+      return await this.handleOrderTrackingQuery(userMessage);
     }
     
     // Check if user provided order number directly
@@ -263,12 +262,12 @@ class EnhancedChatbotService {
     return match ? match[0] : null;
   }
 
-  private handleOrderStatusQuery(message: string): ChatbotResponse {
+  private async handleOrderStatusQuery(message: string): Promise<ChatbotResponse> {
     // Check if they provided order number in the message
     const orderNumber = this.extractOrderNumber(message);
     if (orderNumber) {
       // Process the order lookup
-      return this.lookupOrderByNumber(orderNumber);
+      return await this.lookupOrderByNumber(orderNumber);
     }
     
     return {
@@ -281,10 +280,10 @@ class EnhancedChatbotService {
     };
   }
 
-  private handleOrderTrackingQuery(message: string): ChatbotResponse {
+  private async handleOrderTrackingQuery(message: string): Promise<ChatbotResponse> {
     const orderNumber = this.extractOrderNumber(message);
     if (orderNumber) {
-      return this.lookupOrderByNumber(orderNumber);
+      return await this.lookupOrderByNumber(orderNumber);
     }
     
     return {

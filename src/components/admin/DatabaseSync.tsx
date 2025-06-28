@@ -159,6 +159,9 @@ const DatabaseSync = () => {
           last_name: profile.lastName || '',
           fullname: analysis.profileName,
           phone: profile.phone || '',
+          is_active: true,
+          total_orders: 0,
+          total_spent: 0,
         });
       }
 
