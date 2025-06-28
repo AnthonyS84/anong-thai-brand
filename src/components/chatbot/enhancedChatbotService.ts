@@ -1,3 +1,4 @@
+
 import { orderService } from '@/services/orders/orderService';
 import { chatbotResponses } from './chatbotResponses';
 
@@ -317,4 +318,4 @@ class EnhancedChatbotService {
   }
 }
 
-export const enhancedChatbotService = new EnhancedChatbotService();();
+export const enhancedChatbotService = new EnhancedChatbotService();
