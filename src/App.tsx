@@ -31,6 +31,7 @@ const Menu = React.lazy(() => import("./pages/Menu"));
 const Contact = React.lazy(() => import("./pages/Contact"));
 const Recipes = React.lazy(() => import("./pages/Recipes"));
 const RecipeDetail = React.lazy(() => import("./pages/RecipeDetail"));
+const TraditionalGreenCurryPage = React.lazy(() => import("./pages/TraditionalGreenCurryPage"));
 const ProductDetailPage = React.lazy(() => import("./pages/ProductDetailPage"));
 const CartPage = React.lazy(() => import("./pages/CartPage"));
 
@@ -112,6 +113,7 @@ function App() {
                     <Route path="/recipes" element={<LazyRoute><Recipes /></LazyRoute>} />
                     <Route path="/recipes/:id" element={<LazyRoute><RecipeDetail /></LazyRoute>} />
                     <Route path="/recipe/:id" element={<LazyRoute><RecipeDetail /></LazyRoute>} />
+                    <Route path="/traditional-green-curry" element={<LazyRoute><TraditionalGreenCurryPage /></LazyRoute>} />
                     
                     {/* Product routes */}
                     <Route path="/product/:id" element={<LazyRoute><ProductDetailPage /></LazyRoute>} />

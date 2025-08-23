@@ -31,3 +31,7 @@ node_modules/
 .env
 .vscode
 # OS specific
+# Claude Code Hooks
+.claude/data/
+.claude_backup/
+# logs/ already ignored above

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Search, Clock, Users } from "lucide-react";
 import { OptimizedLazyImage } from "@/components/ui/optimized-lazy-image";
+import FeaturedTraditionalRecipeCard from "@/components/recipe/FeaturedTraditionalRecipeCard";
 
 // Import lightweight metadata instead of full recipe data
 import { recipesMeta, type RecipeMeta } from "@/data/recipesMeta";
@@ -168,6 +169,9 @@ const Recipes = () => {
               ))}
             </div>
           </div>
+          
+          {/* Featured Traditional Recipe */}
+          <FeaturedTraditionalRecipeCard />
           
           {/* Recipes Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">

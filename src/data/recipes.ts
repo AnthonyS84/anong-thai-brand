@@ -1,453 +1,338 @@
+export interface Ingredient {
+  name: string;
+  thaiName?: string;
+  amount: string;
+  culturalSignificance?: string;
+  substitution?: string;
+}
 
-import { Recipe } from "@/types";
+export interface CookingTip {
+  step: string;
+  culturalContext: string;
+  traditionalMethod: string;
+}
 
-export const recipes: Recipe[] = [
-  {
-    id: "red-curry-chicken",
-    name: {
-      en: "Red Curry Chicken",
-      th: "แกงเผ็ดไก่"
+export interface RegionalVariation {
+  region: string;
+  variation: string;
+  significance: string;
+}
+
+export interface ServingInfo {
+  serves: number;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  prepTime: number; // in minutes
+  cookTime: number; // in minutes
+  totalTime: number; // in minutes
+}
+
+export interface ThaiRecipe {
+  id: string;
+  thaiName: string;
+  englishName: string;
+  shortDescription: string;
+  culturalBackground: string;
+  historicalOrigins: string;
+  culturalSignificance: string;
+  ingredients: Ingredient[];
+  instructions: string[];
+  cookingTips: CookingTip[];
+  regionalVariations: RegionalVariation[];
+  servingInfo: ServingInfo;
+  servingTraditions: string;
+  nutritionalPhilosophy: string;
+  seasonalContext: string;
+  imageUrl: string;
+  tags: string[];
+  pairing: {
+    rice: string[];
+    sides: string[];
+    beverages: string[];
+  };
+  schema?: any; // For SEO structured data
+}
+
+export const greenCurryRecipe: ThaiRecipe = {
+  id: 'gaeng-keow-wan-gai',
+  thaiName: 'แกงเขียวหวานไก่',
+  englishName: 'Thai Green Curry with Chicken',
+  shortDescription: 'A fragrant and aromatic curry that embodies the perfect balance of Thai flavors - spicy, sweet, salty, and creamy.',
+  
+  culturalBackground: `Green curry, or "Gaeng Keow Wan" (แกงเขียวหวาน), represents the pinnacle of Thai royal cuisine and the sophisticated balance that defines authentic Thai cooking. The name literally translates to "green sweet curry," though the "sweet" refers not to sugar but to the sweet basil that perfumes this iconic dish.
+
+This curry embodies the Thai culinary philosophy of achieving harmony through contrast - the fiery heat of green chilies balanced by cooling coconut milk, the richness of curry paste offset by fresh herbs, and the intensity of spices mellowed by aromatic vegetables. Each spoonful tells the story of Thailand's cultural exchanges with India, China, and neighboring Southeast Asian countries, while maintaining its distinctly Thai character.`,
+
+  historicalOrigins: `Green curry traces its origins to the royal kitchens of the Ayutthaya period (1351-1767), where palace cooks refined and elevated traditional curry-making techniques. The dish gained particular prominence during the reign of King Rama II in the early 19th century, when royal cuisine became increasingly sophisticated and internationally influenced.
+
+The creation of green curry paste itself is considered an art form passed down through generations. Traditional Thai mothers would teach their daughters the precise balance of ingredients, the proper grinding technique using a granite mortar and pestle (khrok and saak), and the importance of patience in developing the complex flavor profile that makes this curry legendary.
+
+The curry's green color comes from fresh green chilies (prik kee noo suan), which were introduced to Thailand by Portuguese traders in the 16th century, perfectly illustrating how Thai cuisine evolved by embracing foreign ingredients while maintaining its unique identity.`,
+
+  culturalSignificance: `In Thai culture, green curry holds special significance beyond its role as food. It represents the concept of "kreng jai" - the art of balance and consideration for others. The curry's complex preparation requires patience, respect for ingredients, and understanding of how flavors interact, reflecting core Thai values.
+
+Green curry is traditionally served during important family gatherings, Buddhist festivals, and special occasions. The communal nature of sharing curry from a central pot symbolizes unity and generosity in Thai society. The dish is also considered auspicious, with its vibrant green color representing prosperity and growth.
+
+Master curry makers are highly respected in Thai communities, and the ability to create an exceptional green curry paste from scratch is considered a mark of culinary maturity and cultural preservation.`,
+
+  ingredients: [
+    {
+      name: '2-3 tbsp Green Curry Paste',
+      thaiName: 'พริกแกงเขียวหวาน',
+      amount: '2-3 tbsp',
+      culturalSignificance: 'The soul of the dish, traditionally made fresh daily in Thai households using a granite mortar and pestle, representing the patience and dedication required in Thai cooking.',
+      substitution: 'Store-bought paste can be used, but look for brands with minimal preservatives for more authentic flavor'
     },
-    description: {
-      en: "A classic Thai red curry with tender chicken pieces in a rich, aromatic coconut sauce. Perfect served with jasmine rice.",
-      th: "แกงเผ็ดไก่สูตรดั้งเดิม เนื้อไก่นุ่มในซอสกะทิหอมกรุ่น เสิร์ฟพร้อมข้าวหอมมะลิ"
+    {
+      name: 'Coconut Milk',
+      thaiName: 'กะทิ',
+      amount: '400ml thick + 200ml thin',
+      culturalSignificance: 'Sacred in Thai cooking, coconut milk represents abundance and is used in both savory dishes and religious ceremonies. The thick cream is extracted first for richness, while thin milk adds gentle flavor.',
+      substitution: 'Use full-fat canned coconut milk, refrigerated overnight, with thick cream on top separated from thin milk below'
     },
-    servings: 4,
-    time: 30,
-    image: "https://i.postimg.cc/g0XpP20f/Untitled-1.png",
-    ingredients: {
-      en: [
-        "2 tbsp Anong Red Curry Paste",
-        "400ml coconut milk",
-        "500g chicken breast, cut into bite-sized pieces",
-        "1 cup bamboo shoots, sliced",
-        "2 kaffir lime leaves",
-        "1 red bell pepper, sliced",
-        "1 tbsp fish sauce",
-        "1 tbsp palm sugar",
-        "1/4 cup Thai basil leaves"
-      ],
-      th: [
-        "พริกแกงเผ็ดอนงค์ 2 ช้อนโต๊ะ",
-        "กะทิ 400 มล.",
-        "อกไก่ 500 กรัม หั่นเป็นชิ้นพอคำ",
-        "หน่อไม้ 1 ถ้วย หั่นเป็นแว่น",
-        "ใบมะกรูด 2 ใบ",
-        "พริกหวานแดง 1 ลูก หั่นเป็นชิ้น",
-        "น้ำปลา 1 ช้อนโต๊ะ",
-        "น้ำตาลมะพร้าว 1 ช้อนโต๊ะ",
-        "ใบโหระพา 1/4 ถ้วย"
-      ]
+    {
+      name: 'Chicken Breast or Thigh',
+      thaiName: 'เนื้อไก่',
+      amount: '500g, sliced thin',
+      culturalSignificance: 'Chicken is considered a symbol of prosperity in Thai culture. Slicing against the grain in traditional Thai style ensures tenderness and respect for the ingredient.',
+      substitution: 'Beef, pork, shrimp, or vegetables can be used. Tofu for vegetarian version.'
     },
-    steps: {
-      en: [
-        "Heat a small amount of coconut milk in a large pan until it begins to bubble.",
-        "Add the curry paste and stir until fragrant, about 1-2 minutes.",
-        "Add the chicken and stir to coat with the paste. Cook for 3-4 minutes.",
-        "Pour in the remaining coconut milk, fish sauce, and palm sugar. Stir well.",
-        "Add the bamboo shoots, kaffir lime leaves, and red bell pepper. Simmer for 10-15 minutes until chicken is cooked through.",
-        "Stir in the Thai basil just before serving.",
-        "Serve hot with jasmine rice."
-      ],
-      th: [
-        "ใส่กะทิเล็กน้อยลงในกระทะใหญ่ อุ่นจนเริ่มเดือด",
-        "ใส่พริกแกงลงไปผัดจนหอม ประมาณ 1-2 นาที",
-        "ใส่เนื้อไก่ลงไปผัดให้เข้ากับพริกแกง ผัดต่อ 3-4 นาที",
-        "เทกะทิที่เหลือ น้ำปลา และน้ำตาลมะพร้าวลงไป คนให้เข้ากัน",
-        "ใส่หน่อไม้ ใบมะกรูด และพริกหวาน เคี่ยวต่อ 10-15 นาทีจนไก่สุก",
-        "ใส่ใบโหระพาก่อนยกออกจากเตา",
-        "เสิร์ฟร้อนๆกับข้าวหอมมะลิ"
-      ]
+    {
+      name: 'Thai Eggplant',
+      thaiName: 'มะเขือพวง',
+      amount: '6-8 small, quartered',
+      culturalSignificance: 'These small, bitter eggplants add traditional texture and represent the Thai appreciation for diverse flavors, including bitterness, in a balanced dish.',
+      substitution: 'Japanese eggplant cut into chunks, or small Indian eggplants'
     },
-    relatedProducts: ["red-curry-paste"],
-    category: ["curry", "chicken"]
+    {
+      name: 'Thai Basil',
+      thaiName: 'โหระพา',
+      amount: '1 cup fresh leaves',
+      culturalSignificance: 'Holy basil or Thai sweet basil is considered sacred in Thai culture. The aroma is believed to bring peace and prosperity to the household.',
+      substitution: 'Italian basil can substitute but lacks the distinctive anise-like flavor of Thai basil'
+    },
+    {
+      name: 'Kaffir Lime Leaves',
+      thaiName: 'ใบมะกรูด',
+      amount: '4-5 leaves, torn',
+      culturalSignificance: 'The double leaves represent unity and completeness in Thai symbolism. Their citrusy fragrance is considered essential for authentic Thai flavor.',
+      substitution: 'Fresh lime zest can be used sparingly as a last resort'
+    },
+    {
+      name: 'Fish Sauce',
+      thaiName: 'น้ำปลา',
+      amount: '2-3 tbsp',
+      culturalSignificance: 'The essence of umami in Thai cooking, fish sauce connects Thailand to its ancient fishing traditions and represents the harmony between land and sea.',
+      substitution: 'Soy sauce for vegetarian version, though flavor will differ significantly'
+    },
+    {
+      name: 'Palm Sugar',
+      thaiName: 'น้ำตาลปึก',
+      amount: '1-2 tbsp',
+      culturalSignificance: 'Made from palm tree sap, this natural sweetener represents sustainability and the Thai connection to nature. It adds depth and balances the curry\'s heat.',
+      substitution: 'Brown sugar or coconut sugar, though palm sugar has unique caramel notes'
+    },
+    {
+      name: 'Thai Chilies',
+      thaiName: 'พริกขี้หนู',
+      amount: '2-4 whole (optional)',
+      culturalSignificance: 'These tiny chilies pack intense heat and represent courage and strength in Thai culture. Adding whole chilies during cooking releases subtle heat without overwhelming the dish.',
+      substitution: 'Serrano or bird\'s eye chilies, adjust quantity to taste'
+    },
+    {
+      name: 'Bamboo Shoots',
+      thaiName: 'หน่อไผ่',
+      amount: '100g, sliced',
+      culturalSignificance: 'Bamboo represents flexibility and strength in Thai philosophy. The shoots add texture and absorb the curry\'s flavors beautifully.',
+      substitution: 'Water chestnuts or young corn can provide similar texture'
+    }
+  ],
+
+  instructions: [
+    'Heat thick coconut milk in a wok or heavy pot over medium heat until it begins to separate and oil appears on surface (about 3-4 minutes). This traditional technique, called "cracking" the coconut milk, creates the proper foundation for curry.',
+    
+    'Add green curry paste to the separated coconut milk and fry for 2-3 minutes, stirring constantly until fragrant. The paste should sizzle and release its aromatics - this step is crucial for developing deep flavor that distinguishes restaurant-quality curry.',
+    
+    'Add sliced chicken and stir-fry until pieces are sealed and coated with curry paste (about 3-4 minutes). The chicken should turn white but not be fully cooked at this stage.',
+    
+    'Gradually add remaining coconut milk, stirring gently to maintain the curry\'s smooth texture. Bring to a gentle simmer - never boil vigorously as this can cause the coconut milk to curdle.',
+    
+    'Add Thai eggplant, bamboo shoots, and torn kaffir lime leaves. Simmer for 8-10 minutes until vegetables are tender but still have texture. Traditional Thai cooking values the contrast between different textures.',
+    
+    'Season with fish sauce and palm sugar, tasting and adjusting for the perfect balance of salty, sweet, and spicy. This balancing act is the heart of Thai cooking philosophy.',
+    
+    'Add whole Thai chilies for extra heat if desired, and simmer for another 2-3 minutes to allow flavors to meld.',
+    
+    'Remove from heat and stir in fresh Thai basil leaves just before serving. The basil should wilt from residual heat but retain its bright color and fragrance.',
+    
+    'Taste and adjust seasoning one final time. A perfect green curry should have layers of flavor that unfold with each bite.'
+  ],
+
+  cookingTips: [
+    {
+      step: 'Curry Paste Preparation',
+      culturalContext: 'In traditional Thai households, curry paste is made fresh using a granite mortar and pestle, often taking 30-45 minutes of rhythmic pounding.',
+      traditionalMethod: 'The ingredients are added in specific order: hardest ingredients (galangal, lemongrass) first, then softer ones (chilies, garlic), finishing with wet ingredients (shrimp paste). The circular pounding motion is considered meditative.'
+    },
+    {
+      step: 'Coconut Milk Technique',
+      culturalContext: 'Thai grandmothers teach that coconut milk must be "awakened" by gentle heating until it separates, showing respect for this sacred ingredient.',
+      traditionalMethod: 'Use a wooden spoon and stir in one direction only. The oil separation indicates the coconut milk is ready to receive the curry paste - this cannot be rushed.'
+    },
+    {
+      step: 'Heat Balance',
+      culturalContext: 'Thai cuisine philosophy emphasizes that true spiciness should build gradually and be balanced by other flavors, never overwhelming the palate.',
+      traditionalMethod: 'Start with less paste and add gradually. Traditional Thai cooks taste constantly and adjust, understanding that heat tolerance varies among diners.'
+    },
+    {
+      step: 'Ingredient Timing',
+      culturalContext: 'Each ingredient has its moment to enter the curry, reflecting the Thai respect for natural cooking rhythms and ingredient integrity.',
+      traditionalMethod: 'Harder vegetables go in first, delicate herbs last. This ensures each component maintains its character while contributing to the harmonious whole.'
+    }
+  ],
+
+  regionalVariations: [
+    {
+      region: 'Central Thailand (Bangkok)',
+      variation: 'Sweeter version with more palm sugar and coconut milk, often including pineapple chunks',
+      significance: 'Reflects the royal court influence and access to diverse ingredients through trade'
+    },
+    {
+      region: 'Northern Thailand (Chiang Mai)',
+      variation: 'More herbaceous with additional wild vegetables and less coconut milk',
+      significance: 'Shows influence of Lanna kingdom and abundant mountain herbs'
+    },
+    {
+      region: 'Northeastern Thailand (Isan)',
+      variation: 'Spicier and saltier, sometimes with fermented fish (pla ra) instead of fish sauce',
+      significance: 'Reflects the region\'s bold flavors and preservation techniques due to harsh climate'
+    },
+    {
+      region: 'Southern Thailand',
+      variation: 'More coconut-forward with curry leaves and sometimes turmeric for deeper color',
+      significance: 'Influenced by Malaysian and Indian trade, with abundant coconut palms'
+    }
+  ],
+
+  servingInfo: {
+    serves: 4,
+    difficulty: 'Medium',
+    prepTime: 20,
+    cookTime: 25,
+    totalTime: 45
   },
-  {
-    id: "classic-pad-thai",
-    name: {
-      en: "Classic Pad Thai",
-      th: "ผัดไทยสูตรต้นตำรับ"
-    },
-    description: {
-      en: "Thailand's famous stir-fried noodle dish with the perfect balance of sweet, sour, and savory flavors.",
-      th: "อาหารผัดเส้นชื่อดังของไทย รสชาติสมดุลทั้งหวาน เปรี้ยว และเค็ม"
-    },
-    servings: 2,
-    time: 25,
-    image: "https://i.postimg.cc/QtKc51d0/pad-thai.png",
-    ingredients: {
-      en: [
-        "120g rice noodles",
-        "3 tbsp Anong Pad Thai Sauce",
-        "200g large shrimp, peeled and deveined (or firm tofu, cubed)",
-        "2 eggs, beaten",
-        "1 cup bean sprouts",
-        "3 spring onions, chopped",
-        "2 tbsp crushed peanuts",
-        "1 lime, cut into wedges",
-        "2 tbsp vegetable oil"
-      ],
-      th: [
-        "เส้นผัดไทย 120 กรัม",
-        "ซอสผัดไทยอนงค์ 3 ช้อนโต๊ะ",
-        "กุ้งใหญ่ปอกเปลือกและผ่าหลัง 200 กรัม (หรือเต้าหู้แข็ง หั่นเป็นลูกเต๋า)",
-        "ไข่ตีแล้ว 2 ฟอง",
-        "ถั่วงอก 1 ถ้วย",
-        "ต้นหอม 3 ต้น หั่นเป็นท่อน",
-        "ถั่วลิสงบด 2 ช้อนโต๊ะ",
-        "มะนาว 1 ลูก หั่นเป็นชิ้น",
-        "น้ำมันพืช 2 ช้อนโต๊ะ"
-      ]
-    },
-    steps: {
-      en: [
-        "Soak the rice noodles in warm water for 15-20 minutes until soft, then drain.",
-        "Heat oil in a wok or large frying pan over medium-high heat.",
-        "Add shrimp (or tofu) and cook until just pink, about 1-2 minutes. Push to one side.",
-        "Pour beaten eggs into the other side and scramble until just set.",
-        "Add drained noodles and Anong Pad Thai Sauce. Toss well to combine.",
-        "Add bean sprouts and most of the spring onions, reserving some for garnish. Stir-fry for 1-2 minutes more.",
-        "Serve topped with crushed peanuts, reserved spring onions, and lime wedges."
-      ],
-      th: [
-        "แช่เส้นผัดไทยในน้ำอุ่น 15-20 นาที จนนุ่ม แล้วสะเด็ดน้ำ",
-        "ตั้งกระทะใส่น้ำมันบนไฟกลาง-สูง",
-        "ใส่กุ้ง (หรือเต้าหู้) ลงไปผัดจนสุก ประมาณ 1-2 นาที แล้วดันไปด้านหนึ่ง",
-        "เทไข่ที่ตีแล้วลงอีกด้าน และคนให้สุก",
-        "ใส่เส้นที่สะเด็ดน้ำแล้วและซอสผัดไทยอนงค์ คลุกให้เข้ากัน",
-        "ใส่ถั่วงอกและต้นหอมส่วนใหญ่ (เก็บไว้บางส่วนสำหรับตกแต่ง) ผัดต่อ 1-2 นาที",
-        "เสิร์ฟโรยด้วยถั่วลิสงบด ต้นหอมที่เหลือ และมะนาว"
-      ]
-    },
-    relatedProducts: ["pad-thai-sauce"],
-    category: ["noodles", "vegetarian-option"]
+
+  servingTraditions: `Green curry is traditionally served family-style in the center of the table, accompanied by jasmine rice and shared among all diners. In Thai culture, curry is never eaten alone but as part of a balanced meal including various dishes representing different flavors and textures.
+
+The curry should be served immediately while hot, with the basil still bright green and aromatic. Traditional Thai etiquette suggests taking only what you can eat from the communal pot, showing respect for both the food and fellow diners.
+
+During Buddhist festivals and family celebrations, green curry is often prepared in large quantities as an offering of hospitality and abundance to guests and monks.`,
+
+  nutritionalPhilosophy: `Thai cuisine philosophy views food as medicine, and green curry exemplifies this approach. The coconut milk provides healthy fats and energy, while the herbs and spices offer anti-inflammatory and digestive benefits.
+
+Green chilies are rich in vitamin C and capsaicin, which promotes circulation. Thai basil contains essential oils that aid digestion, while galangal and other curry paste ingredients have been used medicinally for centuries.
+
+The balance of protein, vegetables, and rice creates a complete meal that satisfies both physical and spiritual hunger, embodying the Thai concept of "gin kao" - eating with mindfulness and gratitude.`,
+
+  seasonalContext: `While available year-round, green curry is particularly cherished during Thailand's cool season (November-February) when families gather more frequently. The warming spices provide comfort during cooler evenings.
+
+Fresh ingredients are crucial - Thai cooks shop daily for the best vegetables and herbs, understanding that seasonal produce at its peak creates the most flavorful curry. During rainy season, when fresh herbs are abundant, green curry appears more frequently on Thai tables.
+
+Buddhist lunar calendar also influences when curries are prepared, with special versions made during religious holidays and temple festivals.`,
+
+  imageUrl: '/images/green-curry-authentic.jpg',
+  
+  tags: ['curry', 'chicken', 'spicy', 'coconut', 'traditional', 'authentic', 'thai-royal-cuisine', 'main-dish'],
+
+  pairing: {
+    rice: [
+      'Jasmine Rice (ข้าวหอมมะลิ) - Essential for absorbing curry and balancing heat',
+      'Brown Rice (ข้าวกล้อง) - Modern healthy alternative',
+      'Coconut Rice (ข้าวมัน) - For special occasions, adds richness'
+    ],
+    sides: [
+      'Som Tam (ส้มตำ) - Papaya salad provides refreshing contrast',
+      'Thai Cucumber Salad (แตงกวาดอง) - Cooling and cleansing',
+      'Grilled Vegetables (ผักย่าง) - Smoky flavors complement curry',
+      'Thai Omelet (ไข่เจียว) - Traditional protein accompaniment'
+    ],
+    beverages: [
+      'Thai Iced Tea (ชาเย็น) - Sweet and creamy, balances spice',
+      'Fresh Coconut Water (น้ำมะพร้าวสด) - Natural cooling effect',
+      'Chrysanthemum Tea (ชาดอกเก็กฮวย) - Traditional cooling tea',
+      'Chang Beer - Light lager that complements spicy food'
+    ]
   },
-  {
-    id: "panang-curry-beef",
-    name: {
-      en: "Panang Curry with Beef",
-      th: "แกงแพนงเนื้อ"
+
+  schema: {
+    "@context": "https://schema.org",
+    "@type": "Recipe",
+    "name": "Authentic Thai Green Curry with Chicken (แกงเขียวหวานไก่)",
+    "description": "A traditional Thai green curry recipe with rich cultural background, featuring fresh ingredients and time-honored cooking techniques from Thai royal cuisine.",
+    "image": "/images/green-curry-authentic.jpg",
+    "author": {
+      "@type": "Organization",
+      "name": "Anong Thai Brand"
     },
-    description: {
-      en: "Rich and creamy Panang curry with tender beef slices, infused with aromatic spices and a hint of peanut flavor.",
-      th: "แกงแพนงเนื้อนุ่มที่มีรสชาติเข้มข้นและครีมมี่ หอมกลิ่นเครื่องเทศและกลิ่นถั่ว"
+    "prepTime": "PT20M",
+    "cookTime": "PT25M",
+    "totalTime": "PT45M",
+    "recipeYield": "4 servings",
+    "recipeCategory": "Main Dish",
+    "recipeCuisine": "Thai",
+    "keywords": "Thai green curry, authentic recipe, coconut curry, spicy, traditional cooking",
+    "nutrition": {
+      "@type": "NutritionInformation",
+      "servingSize": "1 serving",
+      "calories": "420"
     },
-    servings: 4,
-    time: 35,
-    image: "https://i.postimg.cc/CLqbdjQ1/Panang-curry.png",
-    ingredients: {
-      en: [
-        "3 tbsp Anong Panang Curry Paste",
-        "400ml coconut milk",
-        "500g beef sirloin, thinly sliced",
-        "2 kaffir lime leaves, finely sliced",
-        "1 red bell pepper, sliced",
-        "1/2 cup Thai basil leaves",
-        "2 tbsp fish sauce",
-        "1 tbsp palm sugar",
-        "1/4 cup crushed roasted peanuts"
-      ],
-      th: [
-        "พริกแกงแพนงอนงค์ 3 ช้อนโต๊ะ",
-        "กะทิ 400 มล.",
-        "เนื้อสันในวัว 500 กรัม หั่นบางๆ",
-        "ใบมะกรูด 2 ใบ ซอยละเอียด",
-        "พริกหวานแดง 1 ลูก หั่นเป็นชิ้น",
-        "ใบโหระพา 1/2 ถ้วย",
-        "น้ำปลา 2 ช้อนโต๊ะ",
-        "น้ำตาลมะพร้าว 1 ช้อนโต๊ะ",
-        "ถั่วลิสงคั่วบด 1/4 ถ้วย"
-      ]
-    },
-    steps: {
-      en: [
-        "In a large pot, heat a few tablespoons of coconut milk over medium heat until it begins to bubble and separate.",
-        "Add the Panang curry paste and stir-fry for 2 minutes until fragrant.",
-        "Add the beef and stir to coat with the curry paste. Cook for about 3 minutes.",
-        "Pour in the remaining coconut milk, fish sauce, and palm sugar. Stir well.",
-        "Reduce heat and simmer for 15-20 minutes until beef is tender.",
-        "Add the red bell pepper and cook for another 5 minutes.",
-        "Stir in half of the crushed peanuts, kaffir lime leaves, and Thai basil.",
-        "Serve garnished with remaining crushed peanuts and extra Thai basil leaves."
-      ],
-      th: [
-        "ในหม้อใหญ่ ใส่กะทิสองสามช้อนโต๊ะตั้งไฟกลางจนเดือดและแยกตัว",
-        "ใส่พริกแกงแพนงและผัดประมาณ 2 นาทีจนมีกลิ่นหอม",
-        "ใส่เนื้อวัวและคลุกเคล้ากับพริกแกง ผัดประมาณ 3 นาที",
-        "เติมกะทิที่เหลือ น้ำปลา และน้ำตาลมะพร้าว คนให้เข้ากัน",
-        "ลดไฟลงและเคี่ยวต่อไปอีก 15-20 นาที จนเนื้อนุ่ม",
-        "ใส่พริกหวานแดงและปรุงต่ออีก 5 นาที",
-        "ใส่ถั่วลิสงบดครึ่งหนึ่ง ใบมะกรูด และใบโหระพา",
-        "เสิร์ฟโดยโรยด้วยถั่วลิสงบดที่เหลือและใบโหระพาเพิ่ม"
-      ]
-    },
-    relatedProducts: ["panang-curry-paste"],
-    category: ["curry", "beef"]
-  },
-  {
-    id: "green-curry-vegetables",
-    name: {
-      en: "Vegetable Green Curry",
-      th: "แกงเขียวหวานผัก"
-    },
-    description: {
-      en: "A vibrant Thai green curry loaded with fresh vegetables and aromatic herbs in a smooth coconut sauce.",
-      th: "แกงเขียวหวานผักสดหลากหลายชนิดและสมุนไพรหอมในน้ำแกงกะทิเนียนนุ่ม"
-    },
-    servings: 4,
-    time: 25,
-    image: "https://i.postimg.cc/SxY1S2W7/Green-curry.png",
-    ingredients: {
-      en: [
-        "3 tbsp Anong Green Curry Paste",
-        "400ml coconut milk",
-        "1 small eggplant, cut into chunks",
-        "1 zucchini, sliced",
-        "1 cup sugar snap peas",
-        "1 red bell pepper, sliced",
-        "1/2 cup baby corn",
-        "2 kaffir lime leaves",
-        "1 tbsp palm sugar",
-        "2 tbsp soy sauce",
-        "1/2 cup Thai basil leaves"
-      ],
-      th: [
-        "พริกแกงเขียวหวานอนงค์ 3 ช้อนโต๊ะ",
-        "กะทิ 400 มล.",
-        "มะเขือเปราะ 1 ลูกเล็ก หั่นเป็นชิ้น",
-        "บวบ 1 ลูก หั่นเป็นชิ้น",
-        "ถั่วลันเตาหวาน 1 ถ้วย",
-        "พริกหวานแดง 1 ลูก หั่นเป็นชิ้น",
-        "ข้าวโพดอ่อน 1/2 ถ้วย",
-        "ใบมะกรูด 2 ใบ",
-        "น้ำตาลมะพร้าว 1 ช้อนโต๊ะ",
-        "ซีอิ้ว 2 ช้อนโต๊ะ",
-        "ใบโหระพา 1/2 ถ้วย"
-      ]
-    },
-    steps: {
-      en: [
-        "Heat a few tablespoons of coconut milk in a large pot over medium heat until it begins to bubble.",
-        "Add the green curry paste and stir-fry for 2 minutes until fragrant.",
-        "Pour in the remaining coconut milk and bring to a gentle simmer.",
-        "Add the eggplant and cook for 5 minutes until it begins to soften.",
-        "Add the zucchini, sugar snap peas, red bell pepper, and baby corn. Simmer for another 5-7 minutes.",
-        "Tear the kaffir lime leaves and add them along with the palm sugar and soy sauce. Stir well.",
-        "Turn off the heat and stir in the Thai basil leaves.",
-        "Serve hot with steamed jasmine rice."
-      ],
-      th: [
-        "ใส่กะทิสองสามช้อนโต๊ะลงในหม้อใหญ่ตั้งไฟกลางจนเดือด",
-        "ใส่พริกแกงเขียวหวานลงไปผัด 2 นาทีจนมีกลิ่นหอม",
-        "เทกะทิที่เหลือลงไปและเคี่ยวเบาๆ",
-        "ใส่มะเขือเปราะและปรุงประมาณ 5 นาทีจนเริ่มนุ่ม",
-        "ใส่บวบ ถั่วลันเตาหวาน พริกหวานแดง และข้าวโพดอ่อน เคี่ยวต่ออีก 5-7 นาที",
-        "ฉีกใบมะกรูดแล้วใส่ลงไป ตามด้วยน้ำตาลมะพร้าวและซีอิ้ว คนให้เข้ากัน",
-        "ปิดไฟและใส่ใบโหระพา",
-        "เสิร์ฟร้อนๆกับข้าวสวยหอมมะลิ"
-      ]
-    },
-    relatedProducts: ["green-curry-paste"],
-    category: ["curry", "vegetarian"]
-  },
-  {
-    id: "tom-yum-goong",
-    name: {
-      en: "Tom Yum Goong",
-      th: "ต้มยำกุ้ง"
-    },
-    description: {
-      en: "Classic Thai hot and sour soup with succulent prawns, aromatic herbs and a spicy kick.",
-      th: "ต้มยำกุ้งแบบดั้งเดิม รสเผ็ดเปรี้ยว ใส่กุ้งสดและสมุนไพรหอม"
-    },
-    servings: 4,
-    time: 20,
-    image: "https://i.postimg.cc/0jc5yH13/tom-yum.png",
-    ingredients: {
-      en: [
-        "2 tbsp Anong Tom Yum Chili Paste",
-        "1.5 liters chicken or vegetable stock",
-        "300g large prawns, peeled and deveined",
-        "200g mushrooms, sliced",
-        "4 stalks lemongrass, bruised and cut into 2-inch pieces",
-        "5 slices galangal",
-        "4 kaffir lime leaves, torn",
-        "2-3 Thai chilies, bruised",
-        "2 tbsp fish sauce",
-        "3 tbsp lime juice",
-        "Fresh coriander leaves for garnish"
-      ],
-      th: [
-        "พริกเผาต้มยำอนงค์ 2 ช้อนโต๊ะ",
-        "น้ำซุปไก่หรือผัก 1.5 ลิตร",
-        "กุ้งขนาดใหญ่ ปอกเปลือกและผ่าหลัง 300 กรัม",
-        "เห็ด หั่นเป็นชิ้น 200 กรัม",
-        "ตะไคร้ 4 ต้น ทุบและหั่นเป็นท่อนยาว 2 นิ้ว",
-        "ข่า 5 แว่น",
-        "ใบมะกรูด 4 ใบ ฉีก",
-        "พริกขี้หนูสด 2-3 เม็ด ทุบ",
-        "น้ำปลา 2 ช้อนโต๊ะ",
-        "น้ำมะนาว 3 ช้อนโต๊ะ",
-        "ใบผักชีสำหรับตกแต่ง"
-      ]
-    },
-    steps: {
-      en: [
-        "In a large pot, bring stock to a boil. Add lemongrass, galangal, and kaffir lime leaves.",
-        "Lower the heat and simmer for 5 minutes to infuse the flavors.",
-        "Add the Tom Yum chili paste and stir until dissolved.",
-        "Add mushrooms and simmer for 2 minutes.",
-        "Add prawns and Thai chilies, cook until prawns turn pink (about 2-3 minutes).",
-        "Turn off heat and add fish sauce and lime juice. Adjust seasoning to taste.",
-        "Serve hot, garnished with fresh coriander leaves."
-      ],
-      th: [
-        "ในหม้อใหญ่ ต้มน้ำซุปให้เดือด ใส่ตะไคร้ ข่า และใบมะกรูด",
-        "ลดไฟลงและเคี่ยวประมาณ 5 นาทีเพื่อให้มีกลิ่นหอม",
-        "ใส่พริกเผาต้มยำและคนจนละลาย",
-        "ใส่เห็ดและเคี่ยวต่อไปอีก 2 นาที",
-        "ใส่กุ้งและพริกขี้หนู ปรุงจนกุ้งเปลี่ยนเป็นสีชมพู (ประมาณ 2-3 นาที)",
-        "ปิดไฟและใส่น้ำปลา น้ำมะนาว ปรุงรสตามชอบ",
-        "เสิร์ฟร้อนๆ ตกแต่งด้วยใบผักชี"
-      ]
-    },
-    relatedProducts: ["tom-yum-chili-paste"],
-    category: ["soup", "seafood"]
-  },
-  {
-    id: "massaman-curry-chicken",
-    name: {
-      en: "Massaman Chicken Curry",
-      th: "แกงมัสมั่นไก่"
-    },
-    description: {
-      en: "A rich, mild Thai curry with Persian influences featuring tender chicken, potatoes and a complex blend of spices.",
-      th: "แกงมัสมั่นไก่รสชาติเข้มข้น ได้รับอิทธิพลจากเปอร์เซีย มีเนื้อไก่นุ่ม มันฝรั่ง และเครื่องเทศหลากหลายชนิด"
-    },
-    servings: 6,
-    time: 50,
-    image: "https://i.postimg.cc/GhHqK8Sw/Massaman-curry.png",
-    ingredients: {
-      en: [
-        "3 tbsp Anong Massaman Curry Paste",
-        "500g chicken thighs, cut into large chunks",
-        "400ml coconut milk",
-        "200ml chicken stock",
-        "3 medium potatoes, cut into chunks",
-        "1 large onion, cut into wedges",
-        "1/3 cup roasted peanuts",
-        "3 bay leaves",
-        "1 stick cinnamon",
-        "4 cardamom pods",
-        "2 tbsp tamarind paste",
-        "3 tbsp palm sugar",
-        "2 tbsp fish sauce"
-      ],
-      th: [
-        "พริกแกงมัสมั่นอนงค์ 3 ช้อนโต๊ะ",
-        "น่องไก่ 500 กรัม หั่นเป็นชิ้นใหญ่",
-        "กะทิ 400 มล.",
-        "น้ำซุปไก่ 200 มล.",
-        "มันฝรั่ง 3 หัวขนาดกลาง หั่นเป็นชิ้น",
-        "หัวหอมใหญ่ 1 หัว หั่นเป็นกลีบ",
-        "ถั่วลิสงคั่ว 1/3 ถ้วย",
-        "ใบกระวาน 3 ใบ",
-        "อบเชยแท่ง 1 แท่ง",
-        "ลูกกระวาน 4 ลูก",
-        "น้ำมะขามเปียก 2 ช้อนโต๊ะ",
-        "น้ำตาลมะพร้าว 3 ช้อนโต๊ะ",
-        "น้ำปลา 2 ช้อนโต๊ะ"
-      ]
-    },
-    steps: {
-      en: [
-        "In a large pot, cook a few tablespoons of coconut milk over medium heat until it begins to separate.",
-        "Add the Massaman curry paste and cook for 2 minutes, stirring constantly.",
-        "Add the chicken and stir to coat with the curry paste. Cook for 3-4 minutes until slightly browned.",
-        "Add the remaining coconut milk, chicken stock, bay leaves, cinnamon, and cardamom pods. Bring to a simmer.",
-        "Add potatoes and onion. Cover and simmer for about 30 minutes, until chicken and potatoes are tender.",
-        "Stir in peanuts, tamarind paste, palm sugar, and fish sauce. Cook for another 10 minutes.",
-        "Taste and adjust seasoning if needed. The curry should have a perfect balance of sweet, salty, and tangy flavors.",
-        "Serve hot with steamed jasmine rice."
-      ],
-      th: [
-        "ในหม้อใหญ่ ใส่กะทิ 2-3 ช้อนโต๊ะ ตั้งไฟกลางจนกะทิแยกตัว",
-        "ใส่พริกแกงมัสมั่นและผัด 2 นาที คนตลอดเวลา",
-        "ใส่ไก่ลงไปคลุกเคล้ากับพริกแกง ผัดประมาณ 3-4 นาทีจนเริ่มเป็นสีน้ำตาล",
-        "ใส่กะทิที่เหลือ น้ำซุปไก่ ใบกระวาน อบเชยแท่ง และลูกกระวาน นำมาเคี่ยวเบาๆ",
-        "ใส่มันฝรั่งและหัวหอมใหญ่ ปิดฝาและเคี่ยวประมาณ 30 นาที จนไก่และมันฝรั่งนุ่ม",
-        "ใส่ถั่วลิสง น้ำมะขามเปียก น้ำตาลมะพร้าว และน้ำปลา ปรุงต่ออีก 10 นาที",
-        "ชิมรสชาติและปรับรสตามต้องการ แกงควรมีรสชาติสมดุลทั้งหวาน เค็ม และเปรี้ยว",
-        "เสิร์ฟร้อนๆกับข้าวหอมมะลิ"
-      ]
-    },
-    relatedProducts: ["massaman-curry-paste"],
-    category: ["curry", "chicken"]
-  },
-  {
-    id: "thai-sukiyaki",
-    name: {
-      en: "Thai Sukiyaki (Suki)",
-      th: "สุกี้ยากี้"
-    },
-    description: {
-      en: "A Thai-style hot pot dish with glass noodles, vegetables, and your choice of meat, served with a flavorful sukiyaki sauce.",
-      th: "อาหารประเภทหม้อไฟสไตล์ไทย ใส่วุ้นเส้น ผัก และเนื้อสัตว์ตามชอบ เสิร์ฟพร้อมน้ำจิ้มสุกี้รสชาติเข้มข้น"
-    },
-    servings: 4,
-    time: 30,
-    image: "https://i.postimg.cc/2j2CvJg9/moo-kra-ta.png",
-    ingredients: {
-      en: [
-        "Anong Sukiyaki Sauce (for dipping)",
-        "200g glass noodles",
-        "300g sliced meat (pork, beef, or chicken)",
-        "200g mixed seafood (optional)",
-        "1 package firm tofu, cubed",
-        "2 eggs",
-        "1 head napa cabbage, roughly chopped",
-        "2 cups morning glory, cut into 2-inch pieces",
-        "1 cup sliced mushrooms",
-        "1 bunch coriander",
-        "1.5 liters chicken or vegetable broth"
-      ],
-      th: [
-        "น้ำจิ้มสุกี้ยากี้อนงค์ (สำหรับจิ้ม)",
-        "วุ้นเส้น 200 กรัม",
-        "เนื้อสัตว์หั่นบาง (หมู, เนื้อวัว, หรือไก่) 300 กรัม",
-        "อาหารทะเลรวม 200 กรัม (ถ้าต้องการ)",
-        "เต้าหู้แข็ง 1 ก้อน หั่นเป็นลูกเต๋า",
-        "ไข่ไก่ 2 ฟอง",
-        "ผักกาดขาว 1 หัว หั่นเป็นชิ้นใหญ่ๆ",
-        "ผักบุ้ง 2 ถ้วย หั่นเป็นท่อนยาว 2 นิ้ว",
-        "เห็ดหั่นแว่น 1 ถ้วย",
-        "ผักชี 1 กำ",
-        "น้ำซุปไก่หรือผัก 1.5 ลิตร"
-      ]
-    },
-    steps: {
-      en: [
-        "Soak glass noodles in warm water for 10 minutes until softened, then drain.",
-        "Bring the broth to a boil in a large pot or hot pot at the center of the table.",
-        "Arrange all the ingredients on plates around the hot pot.",
-        "Start by adding meat to the boiling broth, followed by tofu and harder vegetables.",
-        "Once meat is nearly cooked, add softer vegetables and glass noodles.",
-        "When everything is almost done, crack eggs into the broth and stir gently.",
-        "Each person can scoop portions into individual bowls and add Anong Sukiyaki Sauce to taste.",
-        "Continue cooking and eating in batches, adding more ingredients to the broth as needed."
-      ],
-      th: [
-        "แช่วุ้นเส้นในน้ำอุ่นประมาณ 10 นาทีจนนุ่ม แล้วสะเด็ดน้ำ",
-        "ต้มน้ำซุปให้เดือดในหม้อใหญ่หรือหม้อไฟตรงกลางโต๊ะ",
-        "จัดเตรียมวัตถุดิบทั้งหมดใส่จานวางรอบๆหม้อไฟ",
-        "เริ่มจากใส่เนื้อสัตว์ลงในน้ำซุปเดือด ตามด้วยเต้าหู้และผักที่สุกยาก",
-        "เมื่อเนื้อสัตว์ใกล้สุก ใส่ผักที่สุกง่ายและวุ้นเส้น",
-        "เมื่อทุกอย่างใกล้สุก ตอกไข่ใส่ในน้ำซุปและคนเบาๆ",
-        "แต่ละคนตักอาหารใส่ชามของตัวเองและเติมน้ำจิ้มสุกี้อนงค์ตามชอบ",
-        "ทำต่อไปเรื่อยๆ เพิ่มวัตถุดิบลงในน้ำซุปตามต้องการ"
-      ]
-    },
-    relatedProducts: ["sukiyaki-sauce"],
-    category: ["hot pot", "versatile"]
+    "recipeIngredient": [
+      "2-3 tbsp Green Curry Paste (พริกแกงเขียวหวาน)",
+      "400ml thick Coconut Milk (กะทิ)",
+      "200ml thin Coconut Milk",
+      "500g Chicken Breast or Thigh, sliced thin",
+      "6-8 Thai Eggplant, quartered",
+      "1 cup fresh Thai Basil leaves",
+      "4-5 Kaffir Lime Leaves, torn",
+      "2-3 tbsp Fish Sauce",
+      "1-2 tbsp Palm Sugar",
+      "2-4 Thai Chilies (optional)",
+      "100g Bamboo Shoots, sliced"
+    ],
+    "recipeInstructions": [
+      {
+        "@type": "HowToStep",
+        "text": "Heat thick coconut milk in a wok until it separates and oil appears on surface (3-4 minutes)."
+      },
+      {
+        "@type": "HowToStep", 
+        "text": "Add green curry paste and fry for 2-3 minutes until fragrant."
+      },
+      {
+        "@type": "HowToStep",
+        "text": "Add chicken and stir-fry until sealed and coated (3-4 minutes)."
+      },
+      {
+        "@type": "HowToStep",
+        "text": "Gradually add remaining coconut milk and bring to gentle simmer."
+      },
+      {
+        "@type": "HowToStep", 
+        "text": "Add eggplant, bamboo shoots, and lime leaves. Simmer 8-10 minutes."
+      },
+      {
+        "@type": "HowToStep",
+        "text": "Season with fish sauce and palm sugar to taste."
+      },
+      {
+        "@type": "HowToStep",
+        "text": "Add chilies if desired and simmer 2-3 minutes more."
+      },
+      {
+        "@type": "HowToStep",
+        "text": "Remove from heat and stir in Thai basil leaves before serving."
+      }
+    ]
   }
-];
+};
+
+export const recipes: ThaiRecipe[] = [greenCurryRecipe];

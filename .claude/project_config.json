@@ -1,0 +1,35 @@
+{
+  "project_name": "Anong Thai Brand Website",
+  "project_type": "thai_food_website",
+  "tech_stack": {
+    "frontend": "React + TypeScript + Vite",
+    "ui_library": "shadcn/ui + Radix UI",
+    "styling": "Tailwind CSS",
+    "backend": "Supabase",
+    "state_management": "TanStack Query",
+    "mobile": "Capacitor",
+    "animations": "Framer Motion",
+    "package_manager": "npm"
+  },
+  "build_commands": {
+    "dev": "npm run dev",
+    "build": "npm run build",
+    "build_optimized": "npm run build:optimized", 
+    "preview": "npm run preview",
+    "lint": "npm run lint"
+  },
+  "key_directories": {
+    "components": "src/components",
+    "pages": "src/pages", 
+    "hooks": "src/hooks",
+    "services": "src/services",
+    "types": "src/types",
+    "data": "src/data"
+  },
+  "business_context": {
+    "industry": "Thai Food & Restaurant",
+    "target_audience": "Thai food enthusiasts, authentic cuisine seekers",
+    "key_features": ["Authentic Thai recipes", "Product catalog", "Cultural stories", "Mobile ordering"],
+    "brand_values": ["Authenticity", "Quality", "Traditional recipes", "Cultural heritage"]
+  }
+}
