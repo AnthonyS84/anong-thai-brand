@@ -127,10 +127,10 @@ export const recipesMeta: RecipeMeta[] = [
 ];
 
 // Recipe loader utility for lazy loading full recipe data
-export async function loadRecipeDetail(id: string): Promise<Recipe | null> {
+export async function loadRecipeDetail(id: string): Promise<any | null> {
   try {
     const recipes = await import("./recipes");
-    return recipes.recipes.find((recipe: Recipe) => recipe.id === id) || null;
+    return recipes.recipes.find((recipe: any) => recipe.id === id) || null;
   } catch (error) {
     console.error(`Failed to load recipe: ${id}`, error);
     return null;

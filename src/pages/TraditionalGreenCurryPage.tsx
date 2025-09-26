@@ -1,6 +1,6 @@
 import React from 'react';
 import TraditionalThaiGreenCurry from '@/components/recipe/TraditionalThaiGreenCurry';
-import { NavigationBanner } from '@/components/layout/NavigationBanner';
+import NavigationBanner from '@/components/layout/NavigationBanner';
 import Footer from '@/components/layout/Footer';
 
 const TraditionalGreenCurryPage: React.FC = () => {

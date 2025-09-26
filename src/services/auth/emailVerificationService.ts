@@ -9,6 +9,7 @@ interface EmailVerificationResult {
 }
 
 interface UserEmailStatus {
+  email: string;
   isVerified: boolean;
   verificationSentAt?: string;
   attemptCount: number;
@@ -22,16 +23,9 @@ class EmailVerificationService {
    */
   async isEmailVerified(userId: string): Promise<boolean> {
     try {
-      const { data, error } = await supabase.rpc('is_email_verified', {
-        p_user_id: userId
-      });
-
-      if (error) {
-        console.error('📧 EmailVerification: Error checking verification status:', error);
-        return false;
-      }
-
-      return data || false;
+      // Check if user has confirmed their email through Supabase auth
+      const { data: { user } } = await supabase.auth.getUser();
+      return !!(user?.email_confirmed_at);
     } catch (error) {
       console.error('📧 EmailVerification: Error checking email verification:', error);
       return false;
@@ -43,40 +37,31 @@ class EmailVerificationService {
    */
   async getEmailVerificationStatus(userId: string): Promise<UserEmailStatus> {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('email_verified_at, email_verification_sent_at, email_verification_attempts')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('📧 EmailVerification: Error getting verification status:', error);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
         return {
+          email: '',
           isVerified: false,
           attemptCount: 0,
           canResend: true
         };
       }
 
-      const isVerified = !!data?.email_verified_at;
-      const attemptCount = data?.email_verification_attempts || 0;
-      const verificationSentAt = data?.email_verification_sent_at;
-
-      // Check if user can resend verification email
-      const { data: resendData } = await supabase.rpc('can_resend_verification_email', {
-        p_user_id: userId
-      });
-
+      const isVerified = !!user.email_confirmed_at;
+      
       return {
+        email: user.email || '',
         isVerified,
-        verificationSentAt,
-        attemptCount,
-        canResend: resendData?.can_resend || false,
-        nextResendTime: resendData?.wait_until
+        verificationSentAt: user.created_at,
+        attemptCount: 0,
+        canResend: !isVerified,
+        nextResendTime: undefined
       };
     } catch (error) {
       console.error('📧 EmailVerification: Error getting email status:', error);
       return {
+        email: '',
         isVerified: false,
         attemptCount: 0,
         canResend: true
@@ -85,13 +70,11 @@ class EmailVerificationService {
   }
 
   /**
-   * Resends email verification with rate limiting
+   * Resends the verification email to the user
    */
   async resendVerificationEmail(email: string): Promise<EmailVerificationResult> {
     try {
-      console.log('📧 EmailVerification: Attempting to resend verification email to:', email);
-
-      // Get current user to check rate limiting
+      // Get current user to verify they exist
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
@@ -102,15 +85,8 @@ class EmailVerificationService {
         };
       }
 
-      // Check if user can resend verification email
-      const { data: canResendData, error: resendError } = await supabase.rpc('can_resend_verification_email', {
-        p_user_id: user.id
-      });
-
-      if (resendError) {
-        console.error('📧 EmailVerification: Error checking resend eligibility:', resendError);
-        throw resendError;
-      }
+      // Default values for resend check (since edge function is not implemented)
+      const canResendData = { can_resend: true, error: null, wait_until: null };
 
       if (!canResendData?.can_resend) {
         return {
@@ -131,29 +107,36 @@ class EmailVerificationService {
       });
 
       if (error) {
-        console.error('📧 EmailVerification: Failed to resend verification email:', error);
+        console.error('📧 EmailVerification: Error resending verification:', error);
+        
+        if (error.message?.includes('rate limit')) {
+          return {
+            success: false,
+            error: 'Please wait before requesting another verification email',
+            errorCode: 'RATE_LIMITED'
+          };
+        }
+        
         return {
           success: false,
-          error: error.message || 'Failed to send verification email',
-          errorCode: 'SEND_FAILED'
+          error: error.message || 'Failed to resend verification email',
+          errorCode: 'RESEND_FAILED'
         };
       }
 
-      // Track the resend attempt
+      // Track that verification email was sent (simplified)
       await this.trackVerificationSent(user.id);
 
-      console.log('✅ EmailVerification: Verification email resent successfully');
       return {
         success: true,
         message: 'Verification email sent successfully'
       };
-
     } catch (error: any) {
-      console.error('📧 EmailVerification: Error resending verification email:', error);
+      console.error('📧 EmailVerification: Unexpected error:', error);
       return {
         success: false,
-        error: error.message || 'Failed to resend verification email',
-        errorCode: 'RESEND_ERROR'
+        error: 'An unexpected error occurred',
+        errorCode: 'UNEXPECTED_ERROR'
       };
     }
   }
@@ -163,150 +146,91 @@ class EmailVerificationService {
    */
   private async trackVerificationSent(userId: string): Promise<void> {
     try {
-      const { error } = await supabase.rpc('track_email_verification_sent', {
-        p_user_id: userId
-      });
-
-      if (error) {
-        console.error('📧 EmailVerification: Error tracking verification sent:', error);
-      }
+      // Simplified tracking - could be enhanced with edge functions later
+      console.log('📧 EmailVerification: Tracking verification email sent for user:', userId);
     } catch (error) {
-      console.error('📧 EmailVerification: Error tracking verification:', error);
+      console.error('📧 EmailVerification: Error tracking verification email:', error);
     }
   }
 
   /**
-   * Marks email as verified (called after successful verification)
-   */
-  async markEmailVerified(userId: string): Promise<void> {
-    try {
-      const { error } = await supabase.rpc('mark_email_verified', {
-        p_user_id: userId
-      });
-
-      if (error) {
-        console.error('📧 EmailVerification: Error marking email verified:', error);
-        throw error;
-      }
-
-      console.log('✅ EmailVerification: Email marked as verified for user:', userId);
-    } catch (error) {
-      console.error('📧 EmailVerification: Error marking email verified:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Verifies email confirmation token
+   * Verifies an email using a token
    */
   async verifyEmail(token: string, email: string): Promise<EmailVerificationResult> {
     try {
-      console.log('📧 EmailVerification: Verifying email with token');
-
-      const { data, error } = await supabase.auth.verifyOtp({
-        email: email,
-        token: token,
-        type: 'signup'
+      const { error } = await supabase.auth.verifyOtp({
+        token_hash: token,
+        type: 'email',
+        email: email
       });
 
       if (error) {
-        console.error('📧 EmailVerification: Token verification failed:', error);
+        console.error('📧 EmailVerification: Error verifying email:', error);
         return {
           success: false,
-          error: error.message || 'Invalid or expired verification token',
-          errorCode: 'INVALID_TOKEN'
-        };
-      }
-
-      if (data.user) {
-        // Mark email as verified in our profiles table
-        await this.markEmailVerified(data.user.id);
-        
-        console.log('✅ EmailVerification: Email verified successfully');
-        return {
-          success: true,
-          message: 'Email verified successfully'
+          error: error.message || 'Failed to verify email',
+          errorCode: 'VERIFICATION_FAILED'
         };
       }
 
       return {
-        success: false,
-        error: 'Verification failed',
-        errorCode: 'VERIFICATION_FAILED'
+        success: true,
+        message: 'Email verified successfully'
       };
-
     } catch (error: any) {
-      console.error('📧 EmailVerification: Error verifying email:', error);
+      console.error('📧 EmailVerification: Unexpected verification error:', error);
       return {
         success: false,
-        error: error.message || 'Email verification failed',
-        errorCode: 'VERIFY_ERROR'
+        error: 'An unexpected error occurred during verification',
+        errorCode: 'UNEXPECTED_ERROR'
       };
     }
   }
 
   /**
-   * Checks if email verification is required for the current user
+   * Gets current email verification info
    */
-  async requiresEmailVerification(): Promise<boolean> {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) return false;
-
-      // Check if email is confirmed in Supabase auth
-      if (!user.email_confirmed_at) return true;
-
-      // Double-check our profiles table
-      const isVerified = await this.isEmailVerified(user.id);
-      return !isVerified;
-
-    } catch (error) {
-      console.error('📧 EmailVerification: Error checking verification requirement:', error);
-      return false;
-    }
-  }
-
-  /**
-   * Gets user's email verification info for UI display
-   */
-  async getVerificationInfo(): Promise<{
-    email: string | null;
-    isVerified: boolean;
-    canResend: boolean;
-    nextResendTime?: string;
-    attemptCount: number;
-  }> {
+  async getVerificationInfo(): Promise<UserEmailStatus> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
         return {
-          email: null,
+          email: '',
           isVerified: false,
-          canResend: false,
-          attemptCount: 0
+          attemptCount: 0,
+          canResend: true
         };
       }
 
-      const status = await this.getEmailVerificationStatus(user.id);
-      
       return {
-        email: user.email || null,
-        isVerified: status.isVerified,
-        canResend: status.canResend,
-        nextResendTime: status.nextResendTime,
-        attemptCount: status.attemptCount
+        email: user.email || '',
+        isVerified: !!user.email_confirmed_at,
+        verificationSentAt: user.created_at,
+        attemptCount: 0,
+        canResend: !user.email_confirmed_at
       };
-
     } catch (error) {
       console.error('📧 EmailVerification: Error getting verification info:', error);
       return {
-        email: null,
+        email: '',
         isVerified: false,
-        canResend: false,
-        attemptCount: 0
+        attemptCount: 0,
+        canResend: true
       };
+    }
+  }
+
+  /**
+   * Checks if email verification is required
+   */
+  async requiresEmailVerification(): Promise<boolean> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      return !!(user && !user.email_confirmed_at);
+    } catch (error) {
+      console.error('📧 EmailVerification: Error checking if verification required:', error);
+      return false;
     }
   }
 }

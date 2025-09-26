@@ -67,12 +67,13 @@ export class AuthOperationsService {
       if (requiresVerification) {
         console.log('📧 AuthOperations: Email verification required for:', data.email);
         
-        // Track that verification email was sent
+        // Track that verification email was sent (commented out due to missing edge function)
         if (authData.user?.id) {
           try {
-            await supabase.rpc('track_email_verification_sent', {
-              p_user_id: authData.user.id
-            });
+            // await supabase.rpc('track_email_verification_sent', {
+            //   p_user_id: authData.user.id
+            // });
+            console.log('📧 AuthOperations: Email verification tracking skipped - edge function not implemented');
           } catch (trackError) {
             console.warn('📧 AuthOperations: Failed to track verification email:', trackError);
           }

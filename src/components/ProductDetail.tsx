@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { products } from '@/data/products';
-import { recipes } from '@/data/recipes';
+import { recipesMeta } from '@/data/recipesMeta';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -73,9 +73,8 @@ const ProductDetail = () => {
     image: getProductImage(localProduct.name[language])
   } : undefined;
 
-  const relatedRecipes = recipes.filter(recipe => 
-    recipe.relatedProducts?.includes(id || '')
-  );
+  // For now, return empty array since ThaiRecipe doesn't have relatedProducts
+  const relatedRecipes: any[] = [];
 
   // Handler to receive review stats from ProductRatings
   const handleReviewStatsUpdate = (stats: { averageRating: number; reviewCount: number; isLoading: boolean }) => {

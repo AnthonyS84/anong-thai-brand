@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { recipes } from "@/data/recipes";
+import { recipesMeta } from "@/data/recipesMeta";
 import Footer from "@/components/layout/Footer";
 
 interface RecipeNotFoundViewProps {
@@ -29,7 +29,7 @@ const RecipeNotFoundView = ({ id, language }: RecipeNotFoundViewProps) => {
             <div className="text-sm text-gray-500">
               <p>Available recipe IDs:</p>
               <div className="max-w-md mx-auto text-left bg-gray-100 p-4 rounded mt-2">
-                {recipes.map(r => (
+                {recipesMeta.map(r => (
                   <div key={r.id} className="mb-1">
                     <Link to={`/recipe/${r.id}`} className="text-blue-600 hover:underline">
                       {r.id} - {r.name[language]}

@@ -146,11 +146,12 @@ export class PayFastService {
     };
 
     // Add signature when passphrase is available
+    const result: any = { ...paymentData };
     if (this.credentials.passphrase) {
-      paymentData.signature = this.generateSignature(paymentData);
+      result.signature = this.generateSignature(paymentData);
     }
 
-    return paymentData;
+    return result;
   }
 
   private generateSignature(data: any): string {
